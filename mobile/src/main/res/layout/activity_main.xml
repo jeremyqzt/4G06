@@ -16,4 +16,21 @@
         android:layout_alignParentStart="true"
         android:id="@+id/aaa" />
 
+    <TextView
+        android:text="Not too close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ccc"
+        android:layout_below="@+id/aaa"
+        android:layout_alignEnd="@+id/bbb"
+        android:layout_marginTop="55dp" />
+
+    <TextView
+        android:text="Proximity Here"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bbb"
+        android:layout_below="@+id/aaa"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp" />
 </RelativeLayout>

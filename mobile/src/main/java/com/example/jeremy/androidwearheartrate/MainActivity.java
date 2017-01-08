@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,16 +28,33 @@ import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
 
+import static android.hardware.Sensor.TYPE_HEART_RATE;
+import static android.hardware.Sensor.TYPE_PROXIMITY;
 import static com.google.android.gms.wearable.DataMap.TAG;
+import android.os.Handler;
+
 
 
 public class MainActivity extends Activity  implements
         DataApi.DataListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private GoogleApiClient mGoogleApiClient;
     private final String TAG = "Main";
-    TextView rate;
+    private MobileSensorEventListener listener;
+    TextView test,rate, testWarn ;
     private static final String KEY = "Value";
-    //private SensorReceiverService sensorReceiverService = new SensorReceiverService();
+    private float m_prox;
+    Handler handler = new Handler();
+
+
+    private Runnable runnableCode = new Runnable() {
+        @Override
+        public void run() {
+            Log.d("Handlers", "Called on main thread");
+            handler.postDelayed(runnableCode, 1000);
+            m_prox = listener.getProx();
+            test.setText(String.valueOf(m_prox));
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +67,10 @@ public class MainActivity extends Activity  implements
                 .addOnConnectionFailedListener(this)
                 .build();
         rate = (TextView) findViewById(R.id.aaa);
-
+        test = (TextView) findViewById(R.id.bbb);
+        testWarn = (TextView) findViewById(R.id.ccc);
+        listener = new MobileSensorEventListener(this);
+        handler.post(runnableCode);
 
     }
     @Override
@@ -57,6 +78,7 @@ public class MainActivity extends Activity  implements
         super.onStart();
         mGoogleApiClient.connect();
     }
+
 
     @Override
     public void onConnected(Bundle connectionHint) {
@@ -85,12 +107,8 @@ public class MainActivity extends Activity  implements
         for (DataEvent event : dataEvents) {
             if (event.getType() == DataEvent.TYPE_CHANGED) {
                 DataItem item = event.getDataItem();
-                //if (item.getUri().getPath().compareTo("/sensors/") == 0) {
-                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-                    rate.setText(String.valueOf(dataMap.getInt(KEY)));
-                //}
-//                Log.d(TAG, "DataItem Updated: " + event.getDataItem());
-//                rate.setText(event.getInt("").toString());
+                DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                rate.setText(String.valueOf(dataMap.getInt(KEY)));
             }
 
         }
