@@ -40,13 +40,13 @@ public class MobileSensorEventListener  implements SensorEventListener {
         mHumid = mSensorManager.getDefaultSensor(TYPE_RELATIVE_HUMIDITY);
         mrot = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 
-        mSensorManager.registerListener(this, this.mTemperature, SensorManager.SENSOR_DELAY_NORMAL);
-        mSensorManager.registerListener(this, this.mProximity, SensorManager.SENSOR_DELAY_NORMAL);
-        mSensorManager.registerListener(this, this.mAcceleration, SensorManager.SENSOR_DELAY_NORMAL);
-        mSensorManager.registerListener(this, this.mGyroscope, SensorManager.SENSOR_DELAY_NORMAL);
-        mSensorManager.registerListener(this, this.mLight, SensorManager.SENSOR_DELAY_NORMAL);
-        mSensorManager.registerListener(this, this.mHumid, SensorManager.SENSOR_DELAY_NORMAL);
-        mSensorManager.registerListener(this, this.mrot, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, this.mTemperature, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(this, this.mProximity, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(this, this.mAcceleration, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(this, this.mGyroscope, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(this, this.mLight, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(this, this.mHumid, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(this, this.mrot, SensorManager.SENSOR_DELAY_UI);
 
     }
 
@@ -57,7 +57,6 @@ public class MobileSensorEventListener  implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        Log.d(TAG, "Here Atleast");
         Sensor sensor = sensorEvent.sensor;
 
         if (sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE) {
@@ -70,12 +69,12 @@ public class MobileSensorEventListener  implements SensorEventListener {
             m_ax = sensorEvent.values[0];
             m_ay = sensorEvent.values[1];
             m_az = sensorEvent.values[2];
-            Log.d("accl:", String.valueOf(sensorEvent.values[0]));
+            Log.d("accl:", String.valueOf(sensorEvent.values[0])+","+String.valueOf(sensorEvent.values[0])+","+String.valueOf(sensorEvent.values[0]));
         }else if (sensor.getType() == Sensor.TYPE_GYROSCOPE) {
             m_gx = sensorEvent.values[0];
             m_gy = sensorEvent.values[1];
             m_gz = sensorEvent.values[2];
-            Log.d("gyro:", String.valueOf(sensorEvent.values[0]));
+            Log.d("gyro:", String.valueOf(sensorEvent.values[0])+","+String.valueOf(sensorEvent.values[0])+","+String.valueOf(sensorEvent.values[0]));
         }else if (sensor.getType() == Sensor.TYPE_LIGHT) {
             m_light = sensorEvent.values[0];
             Log.d("light:", String.valueOf(sensorEvent.values[0]));

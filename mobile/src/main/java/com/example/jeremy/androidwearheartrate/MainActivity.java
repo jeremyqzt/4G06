@@ -43,6 +43,7 @@ public class MainActivity extends Activity  implements
     TextView test,rate, testWarn ;
     private static final String KEY = "Value";
     private float m_prox, m_temp;
+    private float [] m_gyro, m_accel;
     Handler handler = new Handler();
 
 
@@ -53,8 +54,10 @@ public class MainActivity extends Activity  implements
             m_temp = listener.getLight();
 
             m_prox = listener.getProx();
-            test.setText(String.valueOf(m_prox));
-            testWarn.setText(String.valueOf(m_temp));
+            m_gyro = listener.getGyroscope();
+            m_accel = listener.getAcceleration();
+            test.setText(String.valueOf(m_gyro[0]));
+            testWarn.setText(String.valueOf(m_accel[0]));
         }
     };
 
