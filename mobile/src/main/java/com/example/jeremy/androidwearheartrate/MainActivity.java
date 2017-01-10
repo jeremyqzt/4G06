@@ -42,17 +42,19 @@ public class MainActivity extends Activity  implements
     private MobileSensorEventListener listener;
     TextView test,rate, testWarn ;
     private static final String KEY = "Value";
-    private float m_prox;
+    private float m_prox, m_temp;
     Handler handler = new Handler();
 
 
     private Runnable runnableCode = new Runnable() {
         @Override
         public void run() {
-            Log.d("Handlers", "Called on main thread");
             handler.postDelayed(runnableCode, 1000);
+            m_temp = listener.getLight();
+
             m_prox = listener.getProx();
             test.setText(String.valueOf(m_prox));
+            testWarn.setText(String.valueOf(m_temp));
         }
     };
 
@@ -100,6 +102,7 @@ public class MainActivity extends Activity  implements
             mGoogleApiClient.disconnect();
         }
         super.onStop();
+        listener.unRegister();
     }
 
     @Override
