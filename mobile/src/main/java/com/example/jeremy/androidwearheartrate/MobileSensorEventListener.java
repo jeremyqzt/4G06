@@ -61,26 +61,20 @@ public class MobileSensorEventListener  implements SensorEventListener {
 
         if (sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE) {
             m_temperature = sensorEvent.values[0];
-            Log.d("temp:", String.valueOf(sensorEvent.values[0]));
         } else if (sensor.getType() == Sensor.TYPE_PROXIMITY) {
             m_Proximity = sensorEvent.values[0];
-            Log.d("Prox:", String.valueOf(sensorEvent.values[0]));
         }else if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             m_ax = sensorEvent.values[0];
             m_ay = sensorEvent.values[1];
             m_az = sensorEvent.values[2];
-            Log.d("accl:", String.valueOf(sensorEvent.values[0])+","+String.valueOf(sensorEvent.values[0])+","+String.valueOf(sensorEvent.values[0]));
         }else if (sensor.getType() == Sensor.TYPE_GYROSCOPE) {
             m_gx = sensorEvent.values[0];
             m_gy = sensorEvent.values[1];
             m_gz = sensorEvent.values[2];
-            Log.d("gyro:", String.valueOf(sensorEvent.values[0])+","+String.valueOf(sensorEvent.values[0])+","+String.valueOf(sensorEvent.values[0]));
         }else if (sensor.getType() == Sensor.TYPE_LIGHT) {
             m_light = sensorEvent.values[0];
-            Log.d("light:", String.valueOf(sensorEvent.values[0]));
         }else if (sensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY) {
             m_humid = sensorEvent.values[0];
-            Log.d("humid:", String.valueOf(sensorEvent.values[0]));
         }
 
     }
