@@ -39,8 +39,9 @@ public class MainActivity extends Activity  implements
     private MobileSensorEventListener listener;
     TextView test,rate, testWarn ;
     private static final String KEY = "Value";
-    private float m_prox, m_temp;
+    private float m_prox, m_temp, m_light;
     private float [] m_gyro, m_accel;
+    private float [] concat = {0,0,0};
     private int heartrate;
     Handler handler = new Handler();
 
@@ -48,20 +49,30 @@ public class MainActivity extends Activity  implements
     private Runnable runnableCode = new Runnable() {
         @Override
         public void run() {
-            handler.postDelayed(runnableCode, 2000);
-            m_temp = listener.getLight();
+            handler.postDelayed(runnableCode, 1000);
 
+            //m_temp = listener.getLight();
             m_prox = listener.getProx();
             m_gyro = listener.getGyroscope();
             m_accel = listener.getAcceleration();
-            test.setText(String.valueOf(m_gyro[0]));
-            testWarn.setText(String.valueOf(m_accel[0]));
+            m_light = listener.getLight();
+
+            test.setText(String.valueOf(m_gyro[1]));
 
             Firebase ref = new Firebase(Config.FIREBASE_URL);
 
             InformationSet inst = new InformationSet();
 
-            inst.setHR(m_accel[0]);
+            String testing = String.valueOf(heartrate) +";" + String.valueOf(m_prox) +";" + String.valueOf(m_light);
+            testWarn.setText(testing);
+            concat[0] = heartrate;
+            concat[1] = m_prox;
+            concat[2] = m_light;
+
+            inst.setAcc(m_accel);
+            inst.setGyro(m_gyro);
+            inst.setHeartProxLight(concat);
+
             ref.child("InformationSet").setValue(inst);
 
         }

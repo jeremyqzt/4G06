@@ -7,16 +7,31 @@ package com.example.jeremy.androidwearheartrate;
 public class InformationSet {
 
 
-        private float HR;
+
+        private float[] m_acc,m_gyro,other;
 
         public InformationSet() { //Apparently this is required
         }
-
-        public float getHR() {
-            return HR;
+        public void setAcc(float [] acc){
+            this.m_acc = acc;
+        }
+        public float[] getAcc(){
+            return m_acc;
         }
 
-        public void setHR(float HR) {
-            this.HR = HR;
+        public void setGyro(float [] acc){
+            this.m_gyro = acc;
         }
+        public float[] getGyro(){
+            return m_gyro;
+        }
+        public float[] getHeartProxLight() {
+            return other;
+        }
+        public void setHeartProxLight(float[] HR) {
+            this.other = HR;
+        }
+
+
+
 }
