@@ -44,8 +44,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static android.hardware.Sensor.TYPE_HEART_RATE;
-
+import static android.hardware.Sensor.*;
 public class MainActivity extends Activity implements SensorEventListener{
 
 
@@ -58,6 +57,7 @@ public class MainActivity extends Activity implements SensorEventListener{
     private TextView accuracy;
     private TextView sensorInformation;
     private Sensor mHeartRateSensor;
+    private Sensor mAccelerometer
     private SensorManager mSensorManager;
     private CountDownLatch latch;
     private float previous = 0;
@@ -83,6 +83,7 @@ public class MainActivity extends Activity implements SensorEventListener{
         });
         mSensorManager = ((SensorManager)getSystemService(SENSOR_SERVICE));
         mHeartRateSensor = mSensorManager.getDefaultSensor(TYPE_HEART_RATE);
+        mAccelerometer = mSensorManager.getDefaultSensor(TYPE_ACCELEROMETER);
         mSensorManager.registerListener(this, this.mHeartRateSensor, 1);
 
     }
