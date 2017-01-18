@@ -81,9 +81,7 @@ public class MainActivity extends Activity implements SensorEventListener{
     private float previous = 0;
 
     // Create a constant to convert nanoseconds to seconds.
-    private static final float NS2S = 1.0f / 1000000000.0f;
-    private final float[] deltaRotationVector = new float[4]();
-    private float timestamp;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,7 +160,6 @@ public class MainActivity extends Activity implements SensorEventListener{
         } catch (InterruptedException e) {
             Log.e(TAG, e.getMessage(), e);
         }
-
 
 
     }
