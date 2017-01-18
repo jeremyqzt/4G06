@@ -1,11 +1,16 @@
 package com.example.jeremy.androidwearheartrate;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
+import android.os.BatteryManager;
 import android.os.Bundle;
 
 import android.support.annotation.NonNull;
@@ -41,7 +46,7 @@ public class MainActivity extends Activity  implements
     private static final String KEY = "Value";
     private float m_prox, m_temp, m_light;
     private float [] m_gyro, m_accel;
-    private float [] concat = {0,0,0};
+    private float [] concat = {0,0,0,0};
     private int heartrate;
     Handler handler = new Handler();
 
@@ -63,18 +68,26 @@ public class MainActivity extends Activity  implements
 
             InformationSet inst = new InformationSet();
 
+
             String testing = String.valueOf(heartrate) +";" + String.valueOf(m_prox) +";" + String.valueOf(m_light);
             testWarn.setText(testing);
             concat[0] = heartrate;
             concat[1] = m_prox;
             concat[2] = m_light;
-
             inst.setAcc(m_accel);
             inst.setGyro(m_gyro);
             inst.setHeartProxLight(concat);
+            concat[3] = m_temp;
 
             ref.child("InformationSet").setValue(inst);
 
+        }
+    };
+    private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context c, Intent intent) {
+            int temperature = intent.getIntExtra("temperature", 0);
+            m_temp = (float)temperature / 10;
         }
     };
 
@@ -94,6 +107,9 @@ public class MainActivity extends Activity  implements
         testWarn = (TextView) findViewById(R.id.ccc);
         listener = new MobileSensorEventListener(this);
         handler.post(runnableCode);
+
+        registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+
 
     }
     @Override
