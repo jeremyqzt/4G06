@@ -81,13 +81,15 @@ public class MainActivity extends Activity implements SensorEventListener{
     private CountDownLatch latch;
     private float previous = 0;
 
-    // Create a constant to convert nanoseconds to seconds.
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        latch = new CountDownLatch(1);
+        client = DeviceClient.getInstance(this);
         Heartrate = (TextView) findViewById(R.id.rate);
         Heartrate.setText("Reading...");
         x = (TextView) findViewById(R.id.x);
@@ -124,6 +126,11 @@ public class MainActivity extends Activity implements SensorEventListener{
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
 
         try {
@@ -137,9 +144,9 @@ public class MainActivity extends Activity implements SensorEventListener{
                 client.sendSensorData(sensorEvent.sensor.getType(), sensorEvent.accuracy, sensorEvent.timestamp, sensorEvent.values);
             }
             if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-                x.setText("x:" + Float.toString(sensorEvent.values[0]) + " m/s" + Html.fromHtml("<sup>2</sup>"));
-                y.setText("y:" + Float.toString(sensorEvent.values[1]) + " m/s" + Html.fromHtml("<sup>2</sup>"));
-                z.setText("z:" + Float.toString(sensorEvent.values[2]) + " m/s" + Html.fromHtml("<sup>2</sup>"));
+                x.setText("x:" + String.format("%.2f",sensorEvent.values[0]) + " m/s" + Html.fromHtml("<sup>2</sup>"));
+                y.setText("y:" + String.format("%.2f",sensorEvent.values[1]) + " m/s" + Html.fromHtml("<sup>2</sup>"));
+                z.setText("z:" + String.format("%.2f",sensorEvent.values[2]) + " m/s" + Html.fromHtml("<sup>2</sup>"));
             }
 
             if (sensorEvent.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
@@ -151,11 +158,11 @@ public class MainActivity extends Activity implements SensorEventListener{
             }
 
             if (sensorEvent.sensor.getType() == Sensor.TYPE_LIGHT){
-                illuminance.setText("Illuminance = " + Float.toString(sensorEvent.values[0]) + " lx");
+                illuminance.setText(Float.toString(sensorEvent.values[0]) + " lx");
             }
 
             if (sensorEvent.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE) {
-                ambTemp.setText("Temperature = " + Float.toString(sensorEvent.values[0]) + " C");
+                ambTemp.setText(Float.toString(sensorEvent.values[0]) + " C");
             }
 
         } catch (InterruptedException e) {
