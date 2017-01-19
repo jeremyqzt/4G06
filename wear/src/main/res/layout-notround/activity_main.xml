@@ -6,11 +6,11 @@
     android:padding="15dp">
 
     <FrameLayout
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="5dp"
         app:layout_box="all">
-
 
         <TextView
             android:id="@+id/accuracy"
@@ -27,26 +27,92 @@
             android:gravity="center"
             android:layout_gravity="top"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:text="Heart Rate"
+            android:layout_height="wrap_content" android:text="Sensor Information"
+
             />
 
         <TextView
             android:id="@+id/rate"
-            android:gravity="right"
+            android:gravity="left"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="10sp" android:text="89"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="25dp"/>
+            android:layout_marginTop="35dp"/>
+
+
+
+        <TextView
+            android:id="@+id/illum"
+            android:gravity="left"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10sp" android:text="89 lx"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="65dp"/>
+
+        <TextView
+            android:id="@+id/ambTemp"
+            android:gravity="left"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10sp" android:text="89 C"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="95dp"/>
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center|top"
+            android:layout_marginTop="35dp"
+            android:layout_marginLeft="10dp"
+            android:src="@mipmap/accelerometer"
+            />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center|top"
+            android:layout_marginTop="25dp"
+            android:layout_marginRight="25dp"
+            android:src="@mipmap/heartrate"
+            />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center|top"
+            android:layout_marginTop="55dp"
+            android:layout_marginRight="25dp"
+            android:src="@mipmap/light"
+            />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center|top"
+            android:layout_marginTop="85dp"
+            android:layout_marginRight="25dp"
+            android:src="@mipmap/temperature"
+            />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center|top"
+            android:layout_marginTop="75dp"
+            android:layout_marginLeft="10dp"
+            android:src="@mipmap/gyroscope"
+            />
 
         <TextView
             android:id="@+id/x"
             android:gravity="right"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="10sp" android:text="89"
+            android:textSize="8sp" android:text="x:89 m/s2"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="37dp"/>
+            android:layout_marginTop="35dp"/>
 
         />
 
@@ -55,34 +121,34 @@
             android:gravity="right"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="10sp" android:text="89"
+            android:textSize="8sp" android:text="y:89 m/s2"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="49dp"/>
+            android:layout_marginTop="45dp"/>
 
         <TextView
             android:id="@+id/z"
             android:gravity="right"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="10sp" android:text="89"
+            android:textSize="8sp" android:text="z:89 m/s2"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="61dp"/>
+            android:layout_marginTop="55dp"/>
 
         <TextView
             android:id="@+id/xRotate"
             android:gravity="right"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="10sp" android:text="89"
+            android:textSize="8sp" android:text="x:89 deg/s"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="73dp"/>
+            android:layout_marginTop="75dp"/>
 
         <TextView
             android:id="@+id/yRotate"
             android:gravity="right"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="10sp" android:text="89"
+            android:textSize="8sp" android:text="y:89 deg/s"
             android:layout_marginRight="10dp"
             android:layout_marginTop="85dp"/>
 
@@ -91,29 +157,9 @@
             android:gravity="right"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="10sp" android:text="89"
+            android:textSize="8sp" android:text="z:89 deg/s"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="97dp"/>
-
-        <TextView
-            android:id="@+id/illum"
-            android:gravity="right"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="10sp" android:text="89"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="109dp"/>
-
-        <TextView
-            android:id="@+id/ambTemp"
-            android:gravity="right"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="10sp" android:text="89"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="121dp"/>
-
-
+            android:layout_marginTop="95dp"/>
 
     </FrameLayout>
 </android.support.wearable.view.BoxInsetLayout>

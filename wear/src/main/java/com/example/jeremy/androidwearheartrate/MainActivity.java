@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.wearable.view.WatchViewStub;
+import android.text.Html;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -136,25 +137,25 @@ public class MainActivity extends Activity implements SensorEventListener{
                 client.sendSensorData(sensorEvent.sensor.getType(), sensorEvent.accuracy, sensorEvent.timestamp, sensorEvent.values);
             }
             if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-                x.setText("x = " + Float.toString(sensorEvent.values[0]));
-                y.setText("y = " + Float.toString(sensorEvent.values[1]));
-                z.setText("z = " + Float.toString(sensorEvent.values[2]));
+                x.setText("x:" + Float.toString(sensorEvent.values[0]) + " m/s" + Html.fromHtml("<sup>2</sup>"));
+                y.setText("y:" + Float.toString(sensorEvent.values[1]) + " m/s" + Html.fromHtml("<sup>2</sup>"));
+                z.setText("z:" + Float.toString(sensorEvent.values[2]) + " m/s" + Html.fromHtml("<sup>2</sup>"));
             }
 
             if (sensorEvent.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
 
-                xRotate.setText("xRotation = " + Float.toString(sensorEvent.values[0]));
-                yRotate.setText("yRotation = " + Float.toString(sensorEvent.values[1]));
-                zRotate.setText("zRotation = " + Float.toString(sensorEvent.values[2]));
+                xRotate.setText("x:" + Float.toString(sensorEvent.values[0] * (float)Math.PI * 2) + " deg/s");
+                yRotate.setText("y:" + Float.toString(sensorEvent.values[1] * (float)Math.PI * 2) + " deg/s");
+                zRotate.setText("z:" + Float.toString(sensorEvent.values[2] * (float)Math.PI * 2) + " deg/s");
 
             }
 
             if (sensorEvent.sensor.getType() == Sensor.TYPE_LIGHT){
-                illuminance.setText("Illuminance = " + Float.toString(sensorEvent.values[0]));
+                illuminance.setText("Illuminance = " + Float.toString(sensorEvent.values[0]) + " lx");
             }
 
             if (sensorEvent.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE) {
-                ambTemp.setText("Temperature = " + Float.toString(sensorEvent.values[0]));
+                ambTemp.setText("Temperature = " + Float.toString(sensorEvent.values[0]) + " C");
             }
 
         } catch (InterruptedException e) {
