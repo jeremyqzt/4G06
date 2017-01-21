@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:textSize="10sp" android:text="89"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="35dp"/>
+            android:layout_marginTop="50dp"/>
 
 
 
@@ -49,8 +49,8 @@
             android:layout_height="wrap_content"
             android:textSize="10sp" android:text="89 lx"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="65dp"/>
-
+            android:layout_marginTop="80dp"/>
+<!--
         <TextView
             android:id="@+id/ambTemp"
             android:gravity="left"
@@ -59,12 +59,12 @@
             android:textSize="10sp" android:text="89 C"
             android:layout_marginRight="10dp"
             android:layout_marginTop="95dp"/>
-
+-->
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="center|top"
-            android:layout_marginTop="35dp"
+            android:layout_marginTop="50dp"
             android:layout_marginLeft="10dp"
             android:src="@mipmap/accelerometer"
             />
@@ -73,7 +73,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="center|top"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="40dp"
             android:layout_marginRight="25dp"
             android:src="@mipmap/heartrate"
             />
@@ -82,11 +82,11 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="center|top"
-            android:layout_marginTop="55dp"
+            android:layout_marginTop="70dp"
             android:layout_marginRight="25dp"
             android:src="@mipmap/light"
             />
-
+<!--
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -104,7 +104,7 @@
             android:layout_marginLeft="10dp"
             android:src="@mipmap/gyroscope"
             />
-
+-->
         <TextView
             android:id="@+id/x"
             android:gravity="right"
@@ -112,7 +112,7 @@
             android:layout_height="wrap_content"
             android:textSize="8sp" android:text="x:89 m/s2"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="35dp"/>
+            android:layout_marginTop="50dp"/>
 
         />
 
@@ -123,7 +123,7 @@
             android:layout_height="wrap_content"
             android:textSize="8sp" android:text="y:89 m/s2"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="45dp"/>
+            android:layout_marginTop="60dp"/>
 
         <TextView
             android:id="@+id/z"
@@ -132,8 +132,8 @@
             android:layout_height="wrap_content"
             android:textSize="8sp" android:text="z:89 m/s2"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="55dp"/>
-
+            android:layout_marginTop="70dp"/>
+<!--
         <TextView
             android:id="@+id/xRotate"
             android:gravity="right"
@@ -160,6 +160,6 @@
             android:textSize="8sp" android:text="z:89 deg/s"
             android:layout_marginRight="10dp"
             android:layout_marginTop="95dp"/>
-
+!-->
     </FrameLayout>
 </android.support.wearable.view.BoxInsetLayout>
