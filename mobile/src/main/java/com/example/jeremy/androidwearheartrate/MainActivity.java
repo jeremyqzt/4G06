@@ -1,6 +1,8 @@
 package com.example.jeremy.androidwearheartrate;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -9,9 +11,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.appindexing.Action;
@@ -32,11 +40,16 @@ import static android.hardware.Sensor.TYPE_HEART_RATE;
 import static android.hardware.Sensor.TYPE_PROXIMITY;
 import static com.google.android.gms.wearable.DataMap.TAG;
 import android.os.Handler;
+import android.widget.Toast;
 
+import com.github.lzyzsd.circleprogress.ArcProgress;
 
+import java.util.ArrayList;
+import java.util.List;
 
-public class MainActivity extends Activity  implements
+public class MainActivity extends FragmentActivity  implements
         DataApi.DataListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    public final static String WARNING_ID = "Detailed.Warning.ID";
     private GoogleApiClient mGoogleApiClient;
     private final String TAG = "Main";
     private MobileSensorEventListener listener;
@@ -45,7 +58,9 @@ public class MainActivity extends Activity  implements
     private float m_prox, m_temp;
     private float [] m_gyro, m_accel;
     Handler handler = new Handler();
-
+    ArcProgress myArc;
+    private int currentRate;
+    ArrayList<String> pastWarnings = new ArrayList<>();
 
     private Runnable runnableCode = new Runnable() {
         @Override
@@ -77,7 +92,26 @@ public class MainActivity extends Activity  implements
         listener = new MobileSensorEventListener(this);
         handler.post(runnableCode);
 
+        myArc = (ArcProgress) findViewById(R.id.arc_progress);
+        currentRate = myArc.getProgress();
+
+        fillWarnings();
+
+        ArrayAdapter lvAdapter = new ArrayAdapter<String>(this,
+                R.layout.activity_warninglist, pastWarnings);
+        //create listview with adapter
+        ListView listView = (ListView) findViewById(R.id.list_warning);
+        listView.setAdapter(lvAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long id) {
+                String selectedWarning = (String) adapterView.getItemAtPosition(i);
+//                Toast.makeText(getApplicationContext(),selectedWarning, Toast.LENGTH_LONG).show();
+                changeToDetailsScreen(view, selectedWarning);
+            }
+        });
     }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -115,14 +149,42 @@ public class MainActivity extends Activity  implements
                 DataItem item = event.getDataItem();
                 DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                 rate.setText(String.valueOf(dataMap.getInt(KEY)));
+                myArc.setProgress(dataMap.getInt(KEY));
             }
-
         }
     }
-
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    public void changeScreen(View view){
+        //Switch to Driving activity
+        Intent intent = new Intent(this, DrivingActivity.class);
+        startActivity(intent);
+    }
+
+    public void changeToDetailsScreen(View view, String id) {
+        Intent intent = new Intent(this, DetailedWarningActivity.class);
+        intent.putExtra(WARNING_ID, id);
+        startActivity(intent);
+    }
+
+    public void changeHeartRate(View view){
+        //change value of heartrate circle
+        //UI auto changes when setProgress is called
+        currentRate = myArc.getProgress();
+        currentRate++;
+        myArc.setProgress(currentRate);
+    }
+
+    public void fillWarnings(){
+        for (int i = 0;i < 4;i++) {
+            pastWarnings.add("High Heartrate");
+        }
+        for (int i = 0;i < 5;i++) {
+            pastWarnings.add("Low Heartrate");
+        }
     }
 }

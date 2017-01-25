@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Android Wear Heart Rate</string>
+    <string name="circle_bar_name">Heart Rate</string>
+    <string name="bpm">Heart Rate</string>
+    <string name="face">Facial Status</string>
+    <string name="ready">Readiness</string>
+    <string name="status">Status</string>
+    <string name="title_activity_warning_list_display">WarningListDisplay</string>
 </resources>
