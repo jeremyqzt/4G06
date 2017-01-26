@@ -8,6 +8,6 @@ public class WarningMessageKeys {
 
     static final String neutralRESPONSE = "Ahhhh";
     static final String badRESPONSE = "ALAHHHA";
-    static final String verbadRESPONSE = "HUUU";
+    static final String verybadRESPONSE = "HUUU";
 
 }

@@ -25,17 +25,7 @@ public class Warning {
      */
     public String getResponseMessage(){
         String respMessage = "";
-        switch(id){
-            case WarningIdKeys.BAD:
-                respMessage = WarningMessageKeys.badRESPONSE;
-                break;
-            case WarningIdKeys.NEUTRAL:
-                respMessage = WarningMessageKeys.neutralRESPONSE;
-                break;
-            case WarningIdKeys.VERYBAD:
-                respMessage = WarningMessageKeys.verbadRESPONSE;
-                break;
-        }
+        WarningMessageKeys =
         return respMessage;
     }
 }

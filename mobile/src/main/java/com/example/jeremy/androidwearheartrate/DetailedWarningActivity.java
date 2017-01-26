@@ -2,7 +2,6 @@ package com.example.jeremy.androidwearheartrate;
 
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -22,7 +21,7 @@ public class DetailedWarningActivity extends FragmentActivity {
         TextView textView = (TextView) findViewById(R.id.warning_details);
         ArcProgress myArc = (ArcProgress) findViewById(R.id.heart_rate);
 
-        Warning globalWarning = new Warning(WarningIdKeys.NEUTRAL);
+        Warning globalWarning = new Warning(WarningIdKeys.neutral);
 
         int heartRate;
         String message;
