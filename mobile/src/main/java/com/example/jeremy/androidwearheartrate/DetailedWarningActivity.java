@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.github.lzyzsd.circleprogress.ArcProgress;
+import com.example.jeremy.androidwearheartrate.warnings.Warning;
+import com.example.jeremy.androidwearheartrate.warnings.WarningIdKeys;
 
 public class DetailedWarningActivity extends FragmentActivity {
 
@@ -19,6 +21,8 @@ public class DetailedWarningActivity extends FragmentActivity {
         String id = intent.getStringExtra(MainActivity.WARNING_ID);
         TextView textView = (TextView) findViewById(R.id.warning_details);
         ArcProgress myArc = (ArcProgress) findViewById(R.id.heart_rate);
+
+        Warning globalWarning = new Warning(WarningIdKeys.NEUTRAL);
 
         int heartRate;
         String message;
