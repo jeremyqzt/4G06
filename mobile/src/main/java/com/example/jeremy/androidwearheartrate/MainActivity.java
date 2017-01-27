@@ -32,6 +32,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 
+import com.example.jeremy.androidwearheartrate.blink.Blink;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.DataApi;
@@ -148,6 +149,13 @@ public class MainActivity extends FragmentActivity  implements
         });
         registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
+        //Initialize Blink core system
+        int numOfWearables = 1;
+        int numOfMobiles = 5;
+        int numOfVehicles = 1;
+        boolean hasOpenCV = false;
+        Blink myBlink = new Blink(numOfWearables,numOfMobiles,numOfVehicles,hasOpenCV);
+        myBlink.startSystem();
     }
 
     @Override
