@@ -90,7 +90,7 @@ public class DeviceClient {
 
         dataMap.getDataMap().putInt("Accuracy", accuracy);
         dataMap.getDataMap().putLong("Time", timestamp);
-        dataMap.getDataMap().putInt("Value", Math.round(values[0]));
+        dataMap.getDataMap().putFloatArray("Value", values);
 
         PutDataRequest putDataRequest = dataMap.asPutDataRequest();
         send(putDataRequest);

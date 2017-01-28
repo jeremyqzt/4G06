@@ -47,7 +47,9 @@ public class MainActivity extends Activity  implements
     private float m_prox, m_temp, m_light;
     private float [] m_gyro, m_accel;
     private float [] concat = {0,0,0,0};
+    private float [] watchgyro = {0,0,0};
     private int heartrate;
+    private float light;
     Handler handler = new Handler();
 
 
@@ -74,10 +76,13 @@ public class MainActivity extends Activity  implements
             concat[0] = heartrate;
             concat[1] = m_prox;
             concat[2] = m_light;
+            concat[3] = m_temp;
+
             inst.setAcc(m_accel);
             inst.setGyro(m_gyro);
             inst.setHeartProxLight(concat);
-            concat[3] = m_temp;
+            inst.setWatchLight(light);
+            inst.setWatchGyro(watchgyro);
 
             ref.child("InformationSet").setValue(inst);
 
@@ -148,8 +153,14 @@ public class MainActivity extends Activity  implements
             if (event.getType() == DataEvent.TYPE_CHANGED) {
                 DataItem item = event.getDataItem();
                 DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-                rate.setText(String.valueOf(dataMap.getInt(KEY)));
-                heartrate = dataMap.getInt(KEY);
+                rate.setText(String.valueOf(dataMap.getFloatArray(KEY)[1]));
+                float [] holder = dataMap.getFloatArray(KEY);
+                heartrate = Math.round(holder[0]);
+                light = Math.round(holder[1]);
+                watchgyro [0] = holder [2];
+                watchgyro [1] = holder [3];
+                watchgyro [2] = holder [4];
+
             }
 
         }
