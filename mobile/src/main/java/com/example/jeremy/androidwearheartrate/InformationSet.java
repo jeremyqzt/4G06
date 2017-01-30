@@ -8,7 +8,8 @@ public class InformationSet {
 
 
 
-        private float[] m_acc,m_gyro,other;
+        private float[] m_acc,m_gyro,other, wattchgyro;
+        private float watchLight;
 
         public InformationSet() { //Apparently this is required
         }
@@ -28,9 +29,22 @@ public class InformationSet {
         public float[] getHeartProxLight() {
             return other;
         }
+
         public void setHeartProxLight(float[] HR) {
             this.other = HR;
         }
+
+        public void setWatchLight(float HR) {
+            this.watchLight = HR;
+        }
+        public float getWatchLight(){
+        return watchLight;
+    }
+
+        public void setWatchGyro(float[] HR) {
+        this.wattchgyro = HR;
+    }
+        public float[] getWatchGyro() {return wattchgyro; }
 
 
 
