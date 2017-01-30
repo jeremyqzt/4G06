@@ -32,6 +32,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 
+import com.example.jeremy.androidwearheartrate.blink.Blink;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.DataApi;
@@ -65,7 +66,9 @@ public class MainActivity extends FragmentActivity  implements
     private float m_prox, m_temp, m_light;
     private float [] m_gyro, m_accel;
     private float [] concat = {0,0,0,0};
+    private float [] watchgyro = {0,0,0};
     private int heartrate;
+    private float light;
     Handler handler = new Handler();
     ArcProgress myArc;
     private int currentRate;
@@ -94,10 +97,13 @@ public class MainActivity extends FragmentActivity  implements
             concat[0] = heartrate;
             concat[1] = m_prox;
             concat[2] = m_light;
+            concat[3] = m_temp;
+
             inst.setAcc(m_accel);
             inst.setGyro(m_gyro);
             inst.setHeartProxLight(concat);
-            concat[3] = m_temp;
+            inst.setWatchLight(light);
+            inst.setWatchGyro(watchgyro);
 
             ref.child("InformationSet").setValue(inst);
 
@@ -148,6 +154,13 @@ public class MainActivity extends FragmentActivity  implements
         });
         registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
+        //Initialize Blink core system
+        int numOfWearables = 1;
+        int numOfMobiles = 5;
+        int numOfVehicles = 1;
+        boolean hasOpenCV = false;
+        Blink myBlink = new Blink(numOfWearables,numOfMobiles,numOfVehicles,hasOpenCV);
+        myBlink.startSystem();
     }
 
     @Override
@@ -186,9 +199,15 @@ public class MainActivity extends FragmentActivity  implements
             if (event.getType() == DataEvent.TYPE_CHANGED) {
                 DataItem item = event.getDataItem();
                 DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-                rate.setText(String.valueOf(dataMap.getInt(KEY)));
+                rate.setText(String.valueOf(dataMap.getFloatArray(KEY)[1]));
+                float [] holder = dataMap.getFloatArray(KEY);
+                heartrate = Math.round(holder[0]);
+                light = Math.round(holder[1]);
+                watchgyro [0] = holder [2];
+                watchgyro [1] = holder [3];
+                watchgyro [2] = holder [4];
+
                 myArc.setProgress(dataMap.getInt(KEY));
-                heartrate = dataMap.getInt(KEY);
             }
         }
     }

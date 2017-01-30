@@ -3,39 +3,28 @@ package com.example.jeremy.androidwearheartrate.warnings;
  * Created by kevind on 2017-01-24.
  */
 
-public class Warning {
+abstract class Warning{
 
-    private int id;
-
-    public Warning(int initId){
-        id = initId;
-    }
+    protected int id;
+    protected String response;
 
     public int getId(){
         return id;
     }
 
-    public void setId(int idVal){
-        id = idVal;
+    public void setId(int newid){
+        id = newid;
     }
 
-    /**
-     *
-     * @return message corresponding to Warning type
-     */
-    public String getResponseMessage(){
-        String respMessage = "";
-        switch(id){
-            case WarningIdKeys.BAD:
-                respMessage = WarningMessageKeys.badRESPONSE;
-                break;
-            case WarningIdKeys.NEUTRAL:
-                respMessage = WarningMessageKeys.neutralRESPONSE;
-                break;
-            case WarningIdKeys.VERYBAD:
-                respMessage = WarningMessageKeys.verbadRESPONSE;
-                break;
-        }
-        return respMessage;
+    public String getResponse(){
+        return response;
     }
+
+    public void setResponse(String newResp){
+        response = newResp;
+    }
+
+    //implement a comparision method to show how one might want to improve
+    abstract void Compare();
+
 }

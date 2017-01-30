@@ -6,8 +6,8 @@ package com.example.jeremy.androidwearheartrate.warnings;
 
 public class WarningIdKeys {
 
-    public static final int NEUTRAL = 0;
-    public static final int BAD = 1;
-    public static final int VERYBAD = 2;
+    public static final int neutral = 0;
+    public static final int bad = 1;
+    public static final int verybad = 2;
 
 }
