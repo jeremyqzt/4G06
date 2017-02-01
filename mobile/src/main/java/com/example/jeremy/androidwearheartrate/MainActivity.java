@@ -33,6 +33,9 @@ import android.widget.TextView;
 
 
 import com.example.jeremy.androidwearheartrate.blink.Blink;
+import com.example.jeremy.androidwearheartrate.blink.WarningListChangeListener;
+import com.example.jeremy.androidwearheartrate.warnings.Warning;
+import com.example.jeremy.androidwearheartrate.warnings.WarningMessageKeys;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.DataApi;
@@ -47,11 +50,7 @@ import com.google.android.gms.wearable.WearableListenerService;
 import android.os.Handler;
 import android.widget.Toast;
 import com.github.lzyzsd.circleprogress.ArcProgress;
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,7 +71,8 @@ public class MainActivity extends FragmentActivity  implements
     Handler handler = new Handler();
     ArcProgress myArc;
     private int currentRate;
-    ArrayList<String> pastWarnings = new ArrayList<>();
+    Blink myBlink;
+    ArrayList<Warning> pastWarnings = new ArrayList<>();
 
     private Runnable runnableCode = new Runnable() {
         @Override
@@ -137,9 +137,7 @@ public class MainActivity extends FragmentActivity  implements
         myArc = (ArcProgress) findViewById(R.id.arc_progress);
         currentRate = myArc.getProgress();
 
-        fillWarnings();
-
-        ArrayAdapter lvAdapter = new ArrayAdapter<String>(this,
+        final ArrayAdapter lvAdapter = new ArrayAdapter<Warning>(this,
                 R.layout.activity_warninglist, pastWarnings);
         //create listview with adapter
         ListView listView = (ListView) findViewById(R.id.list_warning);
@@ -147,9 +145,9 @@ public class MainActivity extends FragmentActivity  implements
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long id) {
-                String selectedWarning = (String) adapterView.getItemAtPosition(i);
-//                Toast.makeText(getApplicationContext(),selectedWarning, Toast.LENGTH_LONG).show();
-                changeToDetailsScreen(view, selectedWarning);
+//                String selectedWarning = (String) adapterView.getItemAtPosition(i);
+                Toast.makeText(getApplicationContext(),"clicked", Toast.LENGTH_LONG).show();
+//                changeToDetailsScreen(view, selectedWarning);
             }
         });
         registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
@@ -159,7 +157,16 @@ public class MainActivity extends FragmentActivity  implements
         int numOfMobiles = 5;
         int numOfVehicles = 1;
         boolean hasOpenCV = false;
-        Blink myBlink = new Blink(numOfWearables,numOfMobiles,numOfVehicles,hasOpenCV);
+        myBlink = new Blink(numOfWearables,numOfMobiles,numOfVehicles,hasOpenCV);
+        myBlink.setWarningListener(new WarningListChangeListener() {
+            @Override
+            public void onWarningChange(List<Warning> wList) {
+                pastWarnings.clear();
+                pastWarnings.addAll(wList);
+                Log.d("Update",""+pastWarnings.size());
+                lvAdapter.notifyDataSetChanged();
+            }
+        });
         myBlink.startSystem();
     }
 
@@ -207,7 +214,8 @@ public class MainActivity extends FragmentActivity  implements
                 watchgyro [1] = holder [3];
                 watchgyro [2] = holder [4];
 
-                myArc.setProgress(dataMap.getInt(KEY));
+                myArc.setProgress(Math.round(holder[0]));
+                myBlink.updateMobileValuesFromDevice(m_prox,m_temp,m_light,m_accel);
             }
         }
     }
@@ -217,13 +225,15 @@ public class MainActivity extends FragmentActivity  implements
 
     }
 
-    public void changeScreen(View view){
+    public void changeToDrivingScreen(View view){
         //Switch to Driving activity
         Intent intent = new Intent(this, DrivingActivity.class);
         startActivity(intent);
     }
 
     public void changeToDetailsScreen(View view, String id) {
+        //Go to detailed warning screen
+        //Need to pass proper params
         Intent intent = new Intent(this, DetailedWarningActivity.class);
         intent.putExtra(WARNING_ID, id);
         startActivity(intent);
@@ -232,17 +242,13 @@ public class MainActivity extends FragmentActivity  implements
     public void changeHeartRate(View view){
         //change value of heartrate circle
         //UI auto changes when setProgress is called
+        //Change to read heart rate
         currentRate = myArc.getProgress();
         currentRate++;
         myArc.setProgress(currentRate);
     }
 
     public void fillWarnings(){
-        for (int i = 0;i < 4;i++) {
-            pastWarnings.add("High Heartrate");
-        }
-        for (int i = 0;i < 5;i++) {
-            pastWarnings.add("Low Heartrate");
-        }
+        pastWarnings.add(new Warning(0, WarningMessageKeys.bright));
     }
 }

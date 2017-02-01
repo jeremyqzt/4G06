@@ -3,17 +3,25 @@ package com.example.jeremy.androidwearheartrate.warnings;
  * Created by kevind on 2017-01-24.
  */
 
-abstract class Warning{
+public class Warning{
 
-    protected int id;
-    protected String response;
+    public static final int Caution = 0;
+    public static final int Alert = 1;
+    public static final int Emergency = 2;
 
-    public int getId(){
-        return id;
+    private int type;
+    private String response;
+
+    public Warning(int type, String response){
+        this.response = response;
     }
 
-    public void setId(int newid){
-        id = newid;
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     public String getResponse(){
@@ -24,7 +32,8 @@ abstract class Warning{
         response = newResp;
     }
 
-    //implement a comparision method to show how one might want to improve
-    abstract void Compare();
+    public String toString(){
+        return response;
+    }
 
 }

@@ -7,10 +7,6 @@ import android.widget.TextView;
 import com.github.lzyzsd.circleprogress.ArcProgress;
 import com.example.jeremy.androidwearheartrate.database.DatabaseChangeListener;
 import com.example.jeremy.androidwearheartrate.database.FirebaseDB;
-import com.example.jeremy.androidwearheartrate.warnings.Warning;
-import com.example.jeremy.androidwearheartrate.warnings.WarningIdKeys;
-import com.example.jeremy.androidwearheartrate.warnings.BadWarning;
-import com.example.jeremy.androidwearheartrate.warnings.NeutralWarning;
 
 public class DetailedWarningActivity extends FragmentActivity {
 
@@ -23,9 +19,6 @@ public class DetailedWarningActivity extends FragmentActivity {
         final String id = intent.getStringExtra(MainActivity.WARNING_ID);
         final TextView textView = (TextView) findViewById(R.id.warning_details);
         final ArcProgress myArc = (ArcProgress) findViewById(R.id.heart_rate);
-
-        NeutralWarning nWarn = new NeutralWarning();
-        BadWarning bWarn = new BadWarning();
 
         FirebaseDB instance = new FirebaseDB();
         instance.onChange(new DatabaseChangeListener() {
