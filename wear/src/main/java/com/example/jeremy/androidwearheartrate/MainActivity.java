@@ -96,13 +96,13 @@ public class MainActivity extends Activity implements SensorEventListener{
         y = (TextView) findViewById(R.id.y);
         z = (TextView) findViewById(R.id.z);
 
-        xRotate = (TextView) findViewById(R.id.xRotate);
-        yRotate = (TextView) findViewById(R.id.yRotate);
-        zRotate = (TextView) findViewById(R.id.zRotate);
+//        xRotate = (TextView) findViewById(R.id.xRotate);
+//        yRotate = (TextView) findViewById(R.id.yRotate);
+//        zRotate = (TextView) findViewById(R.id.zRotate);
 
         illuminance = (TextView) findViewById(R.id.illum);
 
-        ambTemp = (TextView) findViewById(R.id.ambTemp);
+//        ambTemp = (TextView) findViewById(R.id.ambTemp);
 
         accuracy = (TextView) findViewById(R.id.accuracy);
         sensorInformation = (TextView) findViewById(R.id.sensor);

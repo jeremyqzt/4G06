@@ -33,7 +33,7 @@ public class Blink {
     private float m_temp;
     private float m_light;
     private float[] m_accel;
-    private float heartrate;
+    private int heartrate;
     private WarningListChangeListener listener;
 
     public Blink(int nwearables, int nmsensors, int nvsensors, boolean hasOpenCV){
@@ -192,56 +192,60 @@ public class Blink {
 
     public void fillWarningList(){
         //DO ALL CALCULATIONS
-        List<Warning> myWarn = new ArrayList<>();
+        List<Warning> newWarnings = new ArrayList<>();
         if(cdSet.getAccelerationz() > 10) {
-            myWarn.add(new Warning(Warning.Alert,WarningMessageKeys.highAccel));
+            newWarnings.add(new Warning(Warning.Alert,WarningMessageKeys.highAccel));
             if (cdSet.getAccelerationz() > 50) {
                 if (cdSet.getAccelerationz() > 80 && cdSet.getRoadType().equals("highway")) {
-                    myWarn.add(new Warning(Warning.Caution, WarningMessageKeys.slowHighWay));
+                    newWarnings.add(new Warning(Warning.Caution, WarningMessageKeys.slowHighWay));
                 } else if (cdSet.getRoadType().equals("city")) {
-                    myWarn.add(new Warning(Warning.Caution, WarningMessageKeys.slowCity));
+                    newWarnings.add(new Warning(Warning.Caution, WarningMessageKeys.slowCity));
                 } else if (cdSet.getAccelerationz() > 100 && cdSet.getRoadType().equals("pcity")) {
-                    myWarn.add(new Warning(Warning.Caution, WarningMessageKeys.slowPcity));
+                    newWarnings.add(new Warning(Warning.Caution, WarningMessageKeys.slowPcity));
                 }
             }
         }
 
 //        if(Math.sqrt(cdSet.get))
         if(m_temp > 38){
-            myWarn.add(new Warning(Warning.Caution,WarningMessageKeys.heat));
+            newWarnings.add(new Warning(Warning.Caution,WarningMessageKeys.heat));
         }
 
         if(m_temp < 0){
-            myWarn.add(new Warning(Warning.Caution,WarningMessageKeys.cold));
+            newWarnings.add(new Warning(Warning.Caution,WarningMessageKeys.cold));
         }
 
         if(cdSet.isWiping()){
-            myWarn.add(new Warning(Warning.Caution,WarningMessageKeys.wiper));
+            newWarnings.add(new Warning(Warning.Caution,WarningMessageKeys.wiper));
             if(cdSet.getAccelerationz() > 10 ){
-                myWarn.add(new Warning(Warning.Caution,WarningMessageKeys.wiperAccel));
+                newWarnings.add(new Warning(Warning.Caution,WarningMessageKeys.wiperAccel));
             }
         }
 
-        if(m_light > 40000){
-            if(m_light > 100000){
-                myWarn.add(new Warning(Warning.Alert,WarningMessageKeys.superBright));
-            }else{
-                myWarn.add(new Warning(Warning.Caution,WarningMessageKeys.bright));
+        if(m_light < 500 && heartrate < 70) {
+            newWarnings.add(new Warning(Warning.Caution,WarningMessageKeys.fatigued));
+        }else if(m_light > 40000) {
+            if (m_light > 100000) {
+                newWarnings.add(new Warning(Warning.Alert, WarningMessageKeys.superBright));
+            } else {
+                newWarnings.add(new Warning(Warning.Caution, WarningMessageKeys.bright));
             }
         }
 
         if(cdSet.isDangerousProximity()){
-            myWarn.add(new Warning(Warning.Alert,WarningMessageKeys.prox));
+            newWarnings.add(new Warning(Warning.Alert,WarningMessageKeys.prox));
         }
+        compareWarnings(newWarnings);
 
-        warningList = myWarn;
+        warningList = newWarnings;
     }
 
     public List<Warning> getWarningList(){
         return warningList;
     }
 
-    public void updateMobileValuesFromDevice(float prox, float temp, float light, float[] accel){
+    public void updateMobileValuesFromDevice(int hr, float prox, float temp, float light, float[] accel){
+        heartrate = hr;
         m_prox = prox;
         m_temp = temp;
         m_light = light;
@@ -250,5 +254,23 @@ public class Blink {
 
     public void setWarningListener(final WarningListChangeListener listener){
         this.listener = listener;
+    }
+
+    public void compareWarnings(List<Warning> newWarnings){
+        Log.d("List","====Compare Warnings====");
+
+        for (Warning w : warningList) {
+            Log.d("List", "Current warnings: " + w.getResponse());
+        }
+
+        Log.d("List","=============");
+
+        for (Warning w : newWarnings) {
+            Log.d("List", "New warnings: " + w.getResponse());
+        }
+
+
+
+
     }
 }

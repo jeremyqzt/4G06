@@ -145,9 +145,9 @@ public class MainActivity extends FragmentActivity  implements
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long id) {
-//                String selectedWarning = (String) adapterView.getItemAtPosition(i);
-                Toast.makeText(getApplicationContext(),"clicked", Toast.LENGTH_LONG).show();
-//                changeToDetailsScreen(view, selectedWarning);
+                String selectedWarning = adapterView.getItemAtPosition(i).toString();
+//                Toast.makeText(getApplicationContext(),"clicked", Toast.LENGTH_LONG).show();
+                changeToDetailsScreen(view, selectedWarning);
             }
         });
         registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
@@ -215,7 +215,7 @@ public class MainActivity extends FragmentActivity  implements
                 watchgyro [2] = holder [4];
 
                 myArc.setProgress(Math.round(holder[0]));
-                myBlink.updateMobileValuesFromDevice(m_prox,m_temp,m_light,m_accel);
+                myBlink.updateMobileValuesFromDevice(heartrate, m_prox,m_temp,m_light,m_accel);
             }
         }
     }

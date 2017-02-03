@@ -3,6 +3,7 @@ package com.example.jeremy.androidwearheartrate;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.widget.TextView;
 import com.github.lzyzsd.circleprogress.ArcProgress;
 import com.example.jeremy.androidwearheartrate.database.DatabaseChangeListener;
@@ -26,13 +27,14 @@ public class DetailedWarningActivity extends FragmentActivity {
             public void onSuccess(String value) {
                 int heartRate;
                 String message;
-                if(id.contains("High")) {
+                if(id.contains("alert")) {
                     heartRate = 120;
                     message = "High heart rate detected, have you been running? If not, don't drive";
                 } else {
                     heartRate = 30;
                     message = "Low heart rate detected, showing abnormal symptoms";
                 }
+                Log.d("Message",id);
 
                 textView.setText(message);
                 myArc.setProgress(heartRate);
