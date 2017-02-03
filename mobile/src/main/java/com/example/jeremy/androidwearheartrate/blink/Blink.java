@@ -268,9 +268,5 @@ public class Blink {
         for (Warning w : newWarnings) {
             Log.d("List", "New warnings: " + w.getResponse());
         }
-
-
-
-
     }
 }

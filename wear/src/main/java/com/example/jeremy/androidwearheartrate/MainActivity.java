@@ -14,6 +14,7 @@ import android.support.wearable.view.WatchViewStub;
 import android.text.Html;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -44,9 +45,11 @@ import com.google.android.gms.wearable.Wearable;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.math.*;
 
-import static android.hardware.Sensor.*;
+import static android.hardware.Sensor.TYPE_ACCELEROMETER;
+import static android.hardware.Sensor.TYPE_HEART_RATE;
+import static android.hardware.Sensor.TYPE_LIGHT;
+
 public class MainActivity extends Activity implements SensorEventListener{
 
 
@@ -55,9 +58,18 @@ public class MainActivity extends Activity implements SensorEventListener{
     private DeviceClient client;
 
     private GoogleApiClient mGoogleApiClient;
-    private TextView Heartrate;
+    private TextView rate;
     private TextView accuracy;
     private TextView sensorInformation;
+    private Sensor mHeartRateSensor, mLightSensor, mAccelerationSensor;
+    private SensorManager mSensorManager;
+    private float previous = 0;
+    private float currentHR, currentLight;
+    private float[] currentAcc = {0,0,0};
+    private float[] concat = {0,0,0,0,0};
+
+    private TextView Heartrate;
+
     private TextView x;
     private TextView y;
     private TextView z;
@@ -67,63 +79,36 @@ public class MainActivity extends Activity implements SensorEventListener{
     private TextView illuminance;
     private TextView ambTemp;
 
-
-    private Sensor mHeartRateSensor;
-    private Sensor mAccelerometer;
-    private Sensor mGyroscope;
-    private Sensor mLight;
-    private Sensor mAmbientTemperature;
-
-
-
-    private SensorManager mSensorManager;
-
-    private CountDownLatch latch;
-    private float previous = 0;
-
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        latch = new CountDownLatch(1);
+        setContentView(R.layout.round_activity_my);
         client = DeviceClient.getInstance(this);
-        Heartrate = (TextView) findViewById(R.id.rate);
-        Heartrate.setText("Reading...");
-        x = (TextView) findViewById(R.id.x);
-        y = (TextView) findViewById(R.id.y);
-        z = (TextView) findViewById(R.id.z);
 
-//        xRotate = (TextView) findViewById(R.id.xRotate);
-//        yRotate = (TextView) findViewById(R.id.yRotate);
-//        zRotate = (TextView) findViewById(R.id.zRotate);
-
-        illuminance = (TextView) findViewById(R.id.illum);
-
-//        ambTemp = (TextView) findViewById(R.id.ambTemp);
 
         accuracy = (TextView) findViewById(R.id.accuracy);
         sensorInformation = (TextView) findViewById(R.id.sensor);
 
-        latch.countDown();
-
-        mSensorManager = (SensorManager) this.getSystemService(SENSOR_SERVICE);
-
-
+        mSensorManager = ((SensorManager)getSystemService(SENSOR_SERVICE));
         mHeartRateSensor = mSensorManager.getDefaultSensor(TYPE_HEART_RATE);
-        mAccelerometer = mSensorManager.getDefaultSensor(TYPE_ACCELEROMETER);
-        mGyroscope = mSensorManager.getDefaultSensor(TYPE_GYROSCOPE);
-        mLight = mSensorManager.getDefaultSensor(TYPE_LIGHT);
-        mAmbientTemperature = mSensorManager.getDefaultSensor(TYPE_AMBIENT_TEMPERATURE);
+        mLightSensor = mSensorManager.getDefaultSensor(TYPE_LIGHT);
+        mAccelerationSensor = mSensorManager.getDefaultSensor(TYPE_ACCELEROMETER);
 
-        mSensorManager.registerListener(this, this.mHeartRateSensor, 1);
-        mSensorManager.registerListener(this, this.mAccelerometer, 1);
-        mSensorManager.registerListener(this, this.mGyroscope, 1);
-        mSensorManager.registerListener(this, this.mLight, 1);
-        mSensorManager.registerListener(this, this.mAmbientTemperature, 1);
+        mSensorManager.registerListener(this, this.mHeartRateSensor, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(this, this.mLightSensor, 25*SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(this, this.mAccelerationSensor, 25*SensorManager.SENSOR_DELAY_UI);
+
+//        x = (TextView) findViewById(R.id.x);
+//        y = (TextView) findViewById(R.id.y);
+//        z = (TextView) findViewById(R.id.z);
+//
+//        illuminance = (TextView) findViewById(R.id.illum);
+//
+//
+//        accuracy = (TextView) findViewById(R.id.accuracy);
+//        sensorInformation = (TextView) findViewById(R.id.sensor);
     }
+
 
     @Override
     protected void onStart() {
@@ -132,59 +117,56 @@ public class MainActivity extends Activity implements SensorEventListener{
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
+        Sensor sensor = sensorEvent.sensor;
 
-        try {
-            latch.await();
-            if(sensorEvent.sensor.getType() == Sensor.TYPE_HEART_RATE && sensorEvent.values[0] > 0){
-                Log.d(TAG, "sensor event: " + sensorEvent.accuracy + " = " + sensorEvent.values[0]);
-                Heartrate.setText(String.valueOf(sensorEvent.values[0]));
-                accuracy.setText("Accuracy: "+sensorEvent.accuracy);
-                sensorInformation.setText(sensorEvent.sensor.toString());
-                previous = sensorEvent.values[0];
-                client.sendSensorData(sensorEvent.sensor.getType(), sensorEvent.accuracy, sensorEvent.timestamp, sensorEvent.values);
-            }
-            if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-                x.setText("x:" + String.format("%.2f",sensorEvent.values[0]) + " m/s" + Html.fromHtml("<sup>2</sup>"));
-                y.setText("y:" + String.format("%.2f",sensorEvent.values[1]) + " m/s" + Html.fromHtml("<sup>2</sup>"));
-                z.setText("z:" + String.format("%.2f",sensorEvent.values[2]) + " m/s" + Html.fromHtml("<sup>2</sup>"));
-            }
+        if (sensor.getType() == Sensor.TYPE_HEART_RATE) {
+            currentHR = sensorEvent.values[0];
+            Log.d("test",""+currentHR);
+//            accuracy.setText("Accuracy: " + sensorEvent.accuracy);
+//            sensorInformation.setText(sensorEvent.sensor.toString());
 
-            if (sensorEvent.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
+        } else if (sensor.getType() == Sensor.TYPE_LIGHT) {
+            currentLight = sensorEvent.values[0];
 
-                xRotate.setText("x:" + Float.toString(sensorEvent.values[0] * (float)Math.PI * 2) + " deg/s");
-                yRotate.setText("y:" + Float.toString(sensorEvent.values[1] * (float)Math.PI * 2) + " deg/s");
-                zRotate.setText("z:" + Float.toString(sensorEvent.values[2] * (float)Math.PI * 2) + " deg/s");
+        } else if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            currentAcc[0] = sensorEvent.values[0];
+            currentAcc[1] = sensorEvent.values[1];
+            currentAcc[2] = sensorEvent.values[2];
 
-            }
-
-            if (sensorEvent.sensor.getType() == Sensor.TYPE_LIGHT){
-                illuminance.setText(Float.toString(sensorEvent.values[0]) + " lx");
-            }
-
-            if (sensorEvent.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE) {
-                ambTemp.setText(Float.toString(sensorEvent.values[0]) + " C");
-            }
-
-        } catch (InterruptedException e) {
-            Log.e(TAG, e.getMessage(), e);
         }
+        concat[0] = currentHR;
+        concat[1] = currentLight;
+        concat[2] = currentAcc[0];
+        concat[3] = currentAcc[1];
+        concat[4] = currentAcc[2];
+
+        Log.d("Concat0", String.valueOf(concat[0]));
+        Log.d("Concat1", String.valueOf(concat[1]));
+        Log.d("Concat2", String.valueOf(concat[2]));
 
 
+
+        if (concat[1] > 0) {
+            Log.d(TAG, "sensor event: " + sensorEvent.accuracy + " = " + sensorEvent.values[0]);
+            previous = sensorEvent.values[0];
+            client.sendSensorData(sensorEvent.sensor.getType(), sensorEvent.accuracy, sensorEvent.timestamp, concat);
+        }
+        if (concat[0] > 0){
+            sensorInformation.setText("All Sensor Data Obtained!");
+        }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
-        Log.d(TAG, "accuracy changed: " + i);
+        if (sensor.getType() == TYPE_HEART_RATE){
+            Log.d(TAG, "accuracy changed: " + i);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onStop();
-        mSensorManager.unregisterListener(this, this.mHeartRateSensor);
-        mSensorManager.unregisterListener(this, this.mAccelerometer);
-        mSensorManager.unregisterListener(this, this.mGyroscope);
-        mSensorManager.unregisterListener(this, this.mLight);
-        mSensorManager.unregisterListener(this, this.mAmbientTemperature);
+        mSensorManager.unregisterListener(this);
     }
 
 }
