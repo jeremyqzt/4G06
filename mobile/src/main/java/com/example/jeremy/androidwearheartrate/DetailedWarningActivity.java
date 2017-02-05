@@ -5,9 +5,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.TextView;
-import com.github.lzyzsd.circleprogress.ArcProgress;
+
 import com.example.jeremy.androidwearheartrate.database.DatabaseChangeListener;
 import com.example.jeremy.androidwearheartrate.database.FirebaseDB;
+import com.github.lzyzsd.circleprogress.ArcProgress;
 
 public class DetailedWarningActivity extends FragmentActivity {
 
@@ -21,10 +22,10 @@ public class DetailedWarningActivity extends FragmentActivity {
         final TextView textView = (TextView) findViewById(R.id.warning_details);
         final ArcProgress myArc = (ArcProgress) findViewById(R.id.heart_rate);
 
-        FirebaseDB instance = new FirebaseDB();
+        FirebaseDB instance = FirebaseDB.getInstance("driverLogs");
         instance.onChange(new DatabaseChangeListener() {
             @Override
-            public void onSuccess(String value) {
+            public void onSuccess(Object value) {
                 int heartRate;
                 String message;
                 if(id.contains("alert")) {

@@ -1,41 +1,26 @@
 package com.example.jeremy.androidwearheartrate;
 
-import android.app.Activity;
-
-import android.content.Intent;
-import android.graphics.Color;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.net.Uri;
-import android.os.BatteryManager;
 import android.os.Bundle;
-
+import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.util.Log;
 import android.widget.TextView;
-
 
 import com.example.jeremy.androidwearheartrate.blink.Blink;
 import com.example.jeremy.androidwearheartrate.blink.WarningListChangeListener;
 import com.example.jeremy.androidwearheartrate.warnings.Warning;
 import com.example.jeremy.androidwearheartrate.warnings.WarningMessageKeys;
+import com.firebase.client.Firebase;
+import com.github.lzyzsd.circleprogress.ArcProgress;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.DataApi;
@@ -45,12 +30,7 @@ import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Wearable;
-import com.google.android.gms.wearable.WearableListenerService;
 
-import android.os.Handler;
-import android.widget.Toast;
-import com.github.lzyzsd.circleprogress.ArcProgress;
-import com.firebase.client.Firebase;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,7 +102,6 @@ public class MainActivity extends FragmentActivity  implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Firebase.setAndroidContext(this);
-
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
                 .addConnectionCallbacks(this)

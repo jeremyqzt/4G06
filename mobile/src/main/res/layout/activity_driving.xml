@@ -34,9 +34,8 @@
         <ProgressBar
             style="@android:style/Widget.Material.Light.ProgressBar.Horizontal"
             android:layout_width="match_parent"
-            android:id="@+id/progressBar4"
+            android:id="@+id/heart_rate_bar"
             android:indeterminate="false"
-            android:progress="30"
             android:layout_height="50dp" />
 
         <TextView
@@ -52,8 +51,7 @@
             style="@android:style/Widget.Material.Light.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:id="@+id/progressBar6"
-            android:progress="60"
+            android:id="@+id/face_bar"
             android:visibility="visible"
             tools:visibility="visible" />
 
@@ -69,17 +67,17 @@
         <ProgressBar
             style="@android:style/Widget.Material.Light.ProgressBar.Horizontal"
             android:layout_width="match_parent"
-            android:id="@+id/progressBar7"
-            android:progress="40"
+            android:id="@+id/readiness_bar"
             android:visibility="visible"
             tools:visibility="visible"
             android:layout_height="40dp" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.3"></LinearLayout>
+        android:layout_weight="0.3"/>
 
 
     <LinearLayout
@@ -99,7 +97,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:ems="10"
-            android:id="@+id/editText3"
+            android:id="@+id/warning_box"
             android:background="@color/green" />
     </LinearLayout>
 
