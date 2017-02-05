@@ -13,9 +13,21 @@ import static android.content.ContentValues.TAG;
 
 public class FirebaseDB {
 
-    private static final String ACTIONS = "actions";
-    private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference myRef = database.getReference(ACTIONS);
+    private static FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private static DatabaseReference myRef;
+
+    private static FirebaseDB instance;
+
+    private FirebaseDB(){
+    }
+
+    public static FirebaseDB getInstance(String reference){
+        myRef = database.getReference(reference);
+        if(instance == null){
+            instance = new FirebaseDB();
+        }
+        return instance;
+    }
 
     public void onChange(final DatabaseChangeListener listener){
 
@@ -24,8 +36,10 @@ public class FirebaseDB {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                listener.onSuccess(value);
+//                ArrayList value = dataSnapshot.getValue(ArrayList.class);
+//                listener.onSuccess(value.toString());
+
+                listener.onSuccess(dataSnapshot.getValue());
             }
 
             @Override
