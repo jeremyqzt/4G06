@@ -21,12 +21,16 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
 
@@ -51,12 +55,13 @@ public class MainActivity extends Activity  implements
     private int heartrate;
     private float light;
     Handler handler = new Handler();
+    public static final String START_ACTIVITY_PATH = "/start/MainActivity";
 
 
     private Runnable runnableCode = new Runnable() {
         @Override
         public void run() {
-            handler.postDelayed(runnableCode, 1000);
+            handler.postDelayed(runnableCode, 250);
 
             //m_temp = listener.getLight();
             m_prox = listener.getProx();
@@ -115,8 +120,29 @@ public class MainActivity extends Activity  implements
 
         registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
-
+        Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+            @Override
+            public void onResult(NodeApi.GetConnectedNodesResult getConnectedNodesResult) {
+                for (Node node : getConnectedNodesResult.getNodes()) {
+                    sendMessage(node.getId());
+                }
+            }
+        });
     }
+
+
+    private void sendMessage(String node) {
+        Wearable.MessageApi.sendMessage(mGoogleApiClient , node , START_ACTIVITY_PATH , new byte[0]).setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
+            @Override
+            public void onResult(MessageApi.SendMessageResult sendMessageResult) {
+                if (!sendMessageResult.getStatus().isSuccess()) {
+                    Log.e("GoogleApi", "Failed to send message with status code: "
+                            + sendMessageResult.getStatus().getStatusCode());
+                }
+            }
+        });
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -153,7 +179,7 @@ public class MainActivity extends Activity  implements
             if (event.getType() == DataEvent.TYPE_CHANGED) {
                 DataItem item = event.getDataItem();
                 DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-                rate.setText(String.valueOf(dataMap.getFloatArray(KEY)[1]));
+                rate.setText(String.valueOf(dataMap.getFloatArray(KEY)[0]));
                 float [] holder = dataMap.getFloatArray(KEY);
                 heartrate = Math.round(holder[0]);
                 light = Math.round(holder[1]);

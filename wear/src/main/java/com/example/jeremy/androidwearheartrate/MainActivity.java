@@ -8,6 +8,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.wearable.view.WatchViewStub;
@@ -17,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -78,16 +80,21 @@ public class MainActivity extends Activity implements SensorEventListener{
     private TextView zRotate;
     private TextView illuminance;
     private TextView ambTemp;
+    long start, end;
+
+    Vibrator vibrator;
+    long[] vibrationPattern = {0, 500, 50, 300};
+    final int indexInPatternToRepeat = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.round_activity_my);
         client = DeviceClient.getInstance(this);
-
-
         accuracy = (TextView) findViewById(R.id.accuracy);
         sensorInformation = (TextView) findViewById(R.id.sensor);
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        start = System.currentTimeMillis();
 
         mSensorManager = ((SensorManager)getSystemService(SENSOR_SERVICE));
         mHeartRateSensor = mSensorManager.getDefaultSensor(TYPE_HEART_RATE);
@@ -138,19 +145,23 @@ public class MainActivity extends Activity implements SensorEventListener{
         concat[2] = currentAcc[0];
         concat[3] = currentAcc[1];
         concat[4] = currentAcc[2];
+//
+//        Log.d("Concat0", String.valueOf(concat[0]));
+//        Log.d("Concat1", String.valueOf(concat[1]));
+//        Log.d("Concat2", String.valueOf(concat[2]));
 
-        Log.d("Concat0", String.valueOf(concat[0]));
-        Log.d("Concat1", String.valueOf(concat[1]));
-        Log.d("Concat2", String.valueOf(concat[2]));
-
-
-
-        if (concat[1] > 0) {
-            Log.d(TAG, "sensor event: " + sensorEvent.accuracy + " = " + sensorEvent.values[0]);
-            previous = sensorEvent.values[0];
-            client.sendSensorData(sensorEvent.sensor.getType(), sensorEvent.accuracy, sensorEvent.timestamp, concat);
+        if (currentAcc[2] > 25){
+            vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
+            Log.d("Vib", String.valueOf(concat[1]));
         }
-        if (concat[0] > 0){
+        end = System.currentTimeMillis();
+        if ((end - start) > 1000){
+            client.sendSensorData(sensorEvent.sensor.getType(), sensorEvent.accuracy, sensorEvent.timestamp, concat); //Timed Event
+            start = end;
+            Log.d("Time Testing", "Sent");
+        }
+
+        if (concat[0] > 0){ //Heart Rate is not 0
             sensorInformation.setText("All Sensor Data Obtained!");
         }
     }
