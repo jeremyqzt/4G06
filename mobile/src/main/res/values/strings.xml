@@ -1,9 +1,17 @@
 <resources>
     <string name="app_name">Android Wear Heart Rate</string>
     <string name="circle_bar_name">Heart Rate</string>
-    <string name="bpm">Heart Rate</string>
-    <string name="face">Facial Status</string>
+    <string name="bpm"><u>Heart Rate</u></string>
+    <string name="bright"><u>Brightness</u></string>
+    <string name="temp"><u>Temperature</u></string>
     <string name="ready">Readiness</string>
     <string name="status">Status</string>
+    <string name="progress">Alertness</string>
+    <string name="health">Health</string>
+    <string name="vehicle">Vehicle</string>
     <string name="title_activity_warning_list_display">WarningListDisplay</string>
+    <string name="speed"><u>Speed</u></string>
+    <string name="accel"><u>Acceleration</u></string>
+    <string name="kmsquare">km/hr<sup>2</sup></string>
+
 </resources>

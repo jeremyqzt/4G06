@@ -2,7 +2,6 @@ package com.example.jeremy.androidwearheartrate.database;
 
 
 import android.util.Log;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -12,10 +11,8 @@ import com.google.firebase.database.ValueEventListener;
 import static android.content.ContentValues.TAG;
 
 public class FirebaseDB {
-
     private static FirebaseDatabase database = FirebaseDatabase.getInstance();
     private static DatabaseReference myRef;
-
     private static FirebaseDB instance;
 
     private FirebaseDB(){
@@ -27,6 +24,11 @@ public class FirebaseDB {
             instance = new FirebaseDB();
         }
         return instance;
+    }
+
+    public void basicWrite(String childpath, Object value){
+        myRef.child(childpath).setValue(value);
+        Log.d("Update", "Post to " + childpath+"/");
     }
 
     public void onChange(final DatabaseChangeListener listener){

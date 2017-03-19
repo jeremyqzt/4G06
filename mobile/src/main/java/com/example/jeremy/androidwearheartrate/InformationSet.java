@@ -6,8 +6,6 @@ package com.example.jeremy.androidwearheartrate;
 
 public class InformationSet {
 
-
-
         private float[] m_acc,m_gyro,other, wattchgyro;
         private float watchLight;
 

@@ -18,7 +18,7 @@ public class DetailedWarningActivity extends FragmentActivity {
         setContentView(R.layout.activity_detailed_warning);
 
         Intent intent = getIntent();
-        final String id = intent.getStringExtra(MainActivity.WARNING_ID);
+//        final String id = intent.getStringExtra(MainActivity);
         final TextView textView = (TextView) findViewById(R.id.warning_details);
         final ArcProgress myArc = (ArcProgress) findViewById(R.id.heart_rate);
 
@@ -28,14 +28,13 @@ public class DetailedWarningActivity extends FragmentActivity {
             public void onSuccess(Object value) {
                 int heartRate;
                 String message;
-                if(id.contains("alert")) {
+                if("no".contains("alert")) {
                     heartRate = 120;
                     message = "High heart rate detected, have you been running? If not, don't drive";
                 } else {
                     heartRate = 30;
                     message = "Low heart rate detected, showing abnormal symptoms";
                 }
-                Log.d("Message",id);
 
                 textView.setText(message);
                 myArc.setProgress(heartRate);

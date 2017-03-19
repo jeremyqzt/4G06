@@ -126,9 +126,9 @@ public class Blink {
                 Log.d("Update","Grabbing Simulation Data");
                 cdSet = dataSnapshot.getValue(CarDataSet.class);
                 //calculate and update warnings
-                fillWarningList();
-                listener.onWarningChange(warningList);
-                //getLogs();
+//                fillWarningList();
+//                listener.onWarningChange(warningList);
+                getLogs();
             }
 
             @Override
@@ -190,60 +190,6 @@ public class Blink {
         Log.d("Log","SpeedVariance"+ cdSet.getSpeedVariance());
     }
 
-    public void fillWarningList(){
-        //DO ALL CALCULATIONS
-        List<Warning> newWarnings = new ArrayList<>();
-        if(cdSet.getAccelerationz() > 10) {
-            newWarnings.add(new Warning(Warning.Alert,WarningMessageKeys.highAccel));
-            if (cdSet.getAccelerationz() > 50) {
-                if (cdSet.getAccelerationz() > 80 && cdSet.getRoadType().equals("highway")) {
-                    newWarnings.add(new Warning(Warning.Caution, WarningMessageKeys.slowHighWay));
-                } else if (cdSet.getRoadType().equals("city")) {
-                    newWarnings.add(new Warning(Warning.Caution, WarningMessageKeys.slowCity));
-                } else if (cdSet.getAccelerationz() > 100 && cdSet.getRoadType().equals("pcity")) {
-                    newWarnings.add(new Warning(Warning.Caution, WarningMessageKeys.slowPcity));
-                }
-            }
-        }
-
-//        if(Math.sqrt(cdSet.get))
-        if(m_temp > 38){
-            newWarnings.add(new Warning(Warning.Caution,WarningMessageKeys.heat));
-        }
-
-        if(m_temp < 0){
-            newWarnings.add(new Warning(Warning.Caution,WarningMessageKeys.cold));
-        }
-
-        if(cdSet.isWiping()){
-            newWarnings.add(new Warning(Warning.Caution,WarningMessageKeys.wiper));
-            if(cdSet.getAccelerationz() > 10 ){
-                newWarnings.add(new Warning(Warning.Caution,WarningMessageKeys.wiperAccel));
-            }
-        }
-
-        if(m_light < 500 && heartrate < 70) {
-            newWarnings.add(new Warning(Warning.Caution,WarningMessageKeys.fatigued));
-        }else if(m_light > 40000) {
-            if (m_light > 100000) {
-                newWarnings.add(new Warning(Warning.Alert, WarningMessageKeys.superBright));
-            } else {
-                newWarnings.add(new Warning(Warning.Caution, WarningMessageKeys.bright));
-            }
-        }
-
-        if(cdSet.isDangerousProximity()){
-            newWarnings.add(new Warning(Warning.Alert,WarningMessageKeys.prox));
-        }
-        compareWarnings(newWarnings);
-
-        warningList = newWarnings;
-    }
-
-    public List<Warning> getWarningList(){
-        return warningList;
-    }
-
     public void updateMobileValuesFromDevice(int hr, float prox, float temp, float light, float[] accel){
         heartrate = hr;
         m_prox = prox;
@@ -252,21 +198,8 @@ public class Blink {
         m_accel = accel;
     }
 
-    public void setWarningListener(final WarningListChangeListener listener){
-        this.listener = listener;
-    }
+//    public void setWarningListener(final WarningListChangeListener listener){
+//        this.listener = listener;
+//    }
 
-    public void compareWarnings(List<Warning> newWarnings){
-        Log.d("List","====Compare Warnings====");
-
-        for (Warning w : warningList) {
-            Log.d("List", "Current warnings: " + w.getResponse());
-        }
-
-        Log.d("List","=============");
-
-        for (Warning w : newWarnings) {
-            Log.d("List", "New warnings: " + w.getResponse());
-        }
-    }
 }
