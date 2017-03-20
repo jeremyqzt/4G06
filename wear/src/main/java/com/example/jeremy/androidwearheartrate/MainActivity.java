@@ -101,7 +101,7 @@ public class MainActivity extends Activity implements SensorEventListener{
         mLightSensor = mSensorManager.getDefaultSensor(TYPE_LIGHT);
         mAccelerationSensor = mSensorManager.getDefaultSensor(TYPE_ACCELEROMETER);
 
-        mSensorManager.registerListener(this, this.mHeartRateSensor, 10*SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(this, this.mHeartRateSensor, SensorManager.SENSOR_DELAY_UI);
         mSensorManager.registerListener(this, this.mLightSensor, 25*SensorManager.SENSOR_DELAY_UI);
         mSensorManager.registerListener(this, this.mAccelerationSensor, 25*SensorManager.SENSOR_DELAY_UI);
 
@@ -128,6 +128,7 @@ public class MainActivity extends Activity implements SensorEventListener{
 
         if (sensor.getType() == Sensor.TYPE_HEART_RATE) {
             currentHR = sensorEvent.values[0];
+            Log.d("test",""+currentHR);
 //            accuracy.setText("Accuracy: " + sensorEvent.accuracy);
 //            sensorInformation.setText(sensorEvent.sensor.toString());
 

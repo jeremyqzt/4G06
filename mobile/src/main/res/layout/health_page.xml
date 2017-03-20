@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/content_summary_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:paddingTop="10dp"
+            android:src="@drawable/ic_lens_black_24dp"
+            android:tint="@color/green"
+            android:id="@+id/core"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:gravity="left"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/systemtext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Systems Nominal"
+                android:textSize="20dp" />
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:id="@+id/desctext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Description" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1.5"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/alertTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:text="@string/progress"
+            android:textSize="30dp" />
+
+        <com.akexorcist.roundcornerprogressbar.IconRoundCornerProgressBar
+            android:id="@+id/alertBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:rcBackgroundColor="@color/custom_progress_background"
+            app:rcIconBackgroundColor="@color/custom_progress_green_header"
+            app:rcIconPadding="5dp"
+            app:rcIconSize="50dp"
+            app:rcIconSrc="@drawable/ic_error_outline_black_24dp"
+            app:rcMax="100"
+            app:rcProgress="100"
+            app:rcProgressColor="@color/custom_progress_green_progress"
+            app:rcRadius="10dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1.5"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/healthTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:text="@string/health"
+            android:textSize="30dp" />
+
+        <com.akexorcist.roundcornerprogressbar.IconRoundCornerProgressBar
+            android:id="@+id/healthBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:rcBackgroundColor="@color/custom_progress_background"
+            app:rcIconBackgroundColor="@color/custom_progress_orange_header"
+            app:rcIconPadding="5dp"
+            app:rcIconSize="50dp"
+            app:rcIconSrc="@drawable/ic_mood_black_24dp"
+            app:rcMax="150"
+            app:rcProgress="50"
+            app:rcProgressColor="@color/custom_progress_orange_progress"
+            app:rcRadius="10dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1.5"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/vehicleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:text="@string/vehicle"
+            android:textSize="30dp" />
+
+        <com.akexorcist.roundcornerprogressbar.IconRoundCornerProgressBar
+            android:id="@+id/vehicleBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:rcBackgroundColor="@color/custom_progress_background"
+            app:rcIconBackgroundColor="@color/custom_progress_blue_header"
+            app:rcIconPadding="5dp"
+            app:rcIconSize="50dp"
+            app:rcIconSrc="@drawable/ic_directions_car_black_24dp"
+            app:rcMax="150"
+            app:rcProgress="100"
+            app:rcProgressColor="@color/custom_progress_blue_progress"
+            app:rcRadius="10dp" />
+    </LinearLayout>
+
+</LinearLayout>

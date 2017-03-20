@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "493980047669",
+    "firebase_url": "https://androidwearheartrate.firebaseio.com",
+    "project_id": "androidwearheartrate",
+    "storage_bucket": "androidwearheartrate.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:493980047669:android:4708e987b3329ae8",
+        "android_client_info": {
+          "package_name": "com.example.jeremy.androidwearheartrate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "493980047669-lk28535fugf24s98fapgs6p1m139qnu9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.jeremy.androidwearheartrate",
+            "certificate_hash": "166f1ed7e4a62c8c207e7deb149d1b092ef063d3"
+          }
+        },
+        {
+          "client_id": "493980047669-hpobu52j7v2sbcjaq2ij32lkmid5bpnq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQH5t2q3YP16hZmoSwxpb0Yk-xK-y93Ok"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "493980047669-hpobu52j7v2sbcjaq2ij32lkmid5bpnq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
