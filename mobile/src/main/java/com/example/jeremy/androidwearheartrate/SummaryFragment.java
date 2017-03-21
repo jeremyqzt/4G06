@@ -31,12 +31,16 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
@@ -62,6 +66,19 @@ public class SummaryFragment extends Fragment implements
     private TextView lightText;
     private TextView tempText;
     private Bundle bundle;
+    public static final String START_ACTIVITY_PATH = "/start/MainActivity";
+
+    private void sendMessage(String node) {
+        Wearable.MessageApi.sendMessage(mGoogleApiClient , node , START_ACTIVITY_PATH , new byte[0]).setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
+            @Override
+            public void onResult(MessageApi.SendMessageResult sendMessageResult) {
+                if (!sendMessageResult.getStatus().isSuccess()) {
+                    Log.e("GoogleApi", "Failed to send message with status code: "
+                            + sendMessageResult.getStatus().getStatusCode());
+                }
+            }
+        });
+    }
 
     private Runnable runnableCode = new Runnable() {
         @Override
@@ -135,7 +152,14 @@ public class SummaryFragment extends Fragment implements
         handler.post(runnableCode);
 
         mActivity.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-
+        Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+            @Override
+            public void onResult(NodeApi.GetConnectedNodesResult getConnectedNodesResult) {
+                for (Node node : getConnectedNodesResult.getNodes()) {
+                    sendMessage(node.getId());
+                }
+            }
+        });
         //init Line Chart from XML
         mChart = (LineChart) view.findViewById(R.id.chart);
 
