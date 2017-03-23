@@ -83,7 +83,7 @@ public class SummaryFragment extends Fragment implements
     private Runnable runnableCode = new Runnable() {
         @Override
         public void run() {
-            handler.postDelayed(runnableCode, 1000);
+            handler.postDelayed(runnableCode, 200);
 
             //m_temp = listener.getLight();
             m_prox = listener.getProx();
@@ -219,8 +219,8 @@ public class SummaryFragment extends Fragment implements
                 float tempval = Float.parseFloat(vals.get(3).toString());
                 float lightval = Float.parseFloat(vals.get(2).toString());
                 float realHR = Float.parseFloat(vals.get(0).toString());
-                lightText.setText(tempval + " Lux");
-                tempText.setText(lightval + " C");
+                lightText.setText(lightval + " Lux");
+                tempText.setText(tempval + " C");
                 addEntry(realHR);
 
             }

@@ -1,6 +1,7 @@
 package com.example.jeremy.androidwearheartrate;
 
 import android.app.Activity;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -18,9 +19,14 @@ import com.example.jeremy.androidwearheartrate.task.flashCoreTask;
 import com.example.jeremy.androidwearheartrate.task.progressBarTask;
 import com.example.jeremy.androidwearheartrate.task.uiTextTask;
 import com.example.jeremy.androidwearheartrate.util.util;
+import com.firebase.client.Firebase;
 
+import java.sql.Time;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -69,6 +75,7 @@ public class HealthFragment extends Fragment{
     private static String green = "#2E7D32";
     private Activity myActivity;
     int flag = 0;
+    MediaPlayer mp;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -87,7 +94,7 @@ public class HealthFragment extends Fragment{
         startListeners();
 
         updateParams();
-
+        mp = MediaPlayer.create(this.getActivity(), R.raw.drowsy);
         return view;
     }
 
@@ -248,7 +255,7 @@ public class HealthFragment extends Fragment{
                     flag = 0;
                 }
 
-                if(heartrate > 120){
+                if(heartrate < 120){
                     healthBarChange.incrementProgress();
                 }
                 healthBarChange.incrementTotal();
@@ -265,6 +272,18 @@ public class HealthFragment extends Fragment{
         //do healthBar changes here
     }
 
+    private void write_curr(){
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        Firebase ref = new Firebase(Config.FIREBASE_URL);
+
+        Map map = new HashMap();
+        map.put("Speed",carSpeed );
+        map.put("Time", currentDateTimeString);
+        map.put("Time2", currentDateTimeString);
+        ref.push().setValue(map);
+
+
+    }
     //periodic increments
     private void updateParams(){
         if (updateThread != null){
@@ -287,11 +306,14 @@ public class HealthFragment extends Fragment{
                     if(gender.equals("Female")){
                         genderdev = 10;
                     }
-
                     //bad way to count to 5, should be done another way
                     //checking steering wheel positions
-                    count++;
+
+
+
+                    count++; //Internal Usage
                     if(count == 5){
+                        write_curr();
                         count = 0;
                         if(watchgyro[2] > 0 && watchgyro[2]<8){
                             status = 0;
@@ -560,10 +582,12 @@ public class HealthFragment extends Fragment{
                         myActivity.runOnUiThread(colorcore);
                         myActivity.runOnUiThread(flashcore);
                         good = false;
+                        mp.start();
                     }else{
                         //everything is normal
                         alertBarChange.incrementProgress();
                     }
+
                     alertBarChange.incrementTotal();
                     //change alertness bar
                     myActivity.runOnUiThread(alertBarChange);

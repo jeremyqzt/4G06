@@ -49,8 +49,10 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static android.hardware.Sensor.TYPE_ACCELEROMETER;
+import static android.hardware.Sensor.TYPE_GYROSCOPE;
 import static android.hardware.Sensor.TYPE_HEART_RATE;
 import static android.hardware.Sensor.TYPE_LIGHT;
+import static java.lang.StrictMath.abs;
 
 public class MainActivity extends Activity implements SensorEventListener{
 
@@ -63,11 +65,12 @@ public class MainActivity extends Activity implements SensorEventListener{
     private TextView rate;
     private TextView accuracy;
     private TextView sensorInformation;
-    private Sensor mHeartRateSensor, mLightSensor, mAccelerationSensor;
+    private Sensor mHeartRateSensor, mLightSensor, mAccelerationSensor, mGyro;
     private SensorManager mSensorManager;
     private float previous = 0;
     private float currentHR, currentLight;
     private float[] currentAcc = {0,0,0};
+    private float[] gyroscope = {0,0,0};
     private float[] concat = {0,0,0,0,0};
 
     private TextView Heartrate;
@@ -100,6 +103,7 @@ public class MainActivity extends Activity implements SensorEventListener{
         mHeartRateSensor = mSensorManager.getDefaultSensor(TYPE_HEART_RATE);
         mLightSensor = mSensorManager.getDefaultSensor(TYPE_LIGHT);
         mAccelerationSensor = mSensorManager.getDefaultSensor(TYPE_ACCELEROMETER);
+        mGyro = mSensorManager.getDefaultSensor(TYPE_GYROSCOPE);
 
         mSensorManager.registerListener(this, this.mHeartRateSensor, SensorManager.SENSOR_DELAY_UI);
         mSensorManager.registerListener(this, this.mLightSensor, 25*SensorManager.SENSOR_DELAY_UI);
@@ -151,11 +155,14 @@ public class MainActivity extends Activity implements SensorEventListener{
 //        Log.d("Concat1", String.valueOf(concat[1]));
 //        Log.d("Concat2", String.valueOf(concat[2]));
 
-        if (currentAcc[2] > 25){
-            vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
-            Log.d("Vib", String.valueOf(concat[1]));
-        }
         end = System.currentTimeMillis();
+        if (abs(currentAcc[0]) > 22 || abs(currentAcc[1]) > 22 || abs(currentAcc[2]) > 22){
+            client.sendSensorData(sensorEvent.sensor.getType(), sensorEvent.accuracy, sensorEvent.timestamp, concat); //Timed Event
+            start = end;
+            Log.d("Shock Testing", "Sent");
+            vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
+        }
+
         if ((end - start) > 1000){
             client.sendSensorData(sensorEvent.sensor.getType(), sensorEvent.accuracy, sensorEvent.timestamp, concat); //Timed Event
             start = end;

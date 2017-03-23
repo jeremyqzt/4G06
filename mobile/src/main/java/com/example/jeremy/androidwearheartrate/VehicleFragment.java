@@ -128,7 +128,7 @@ public class VehicleFragment extends Fragment{
             }
         });
 
-        FirebaseDB.getInstance("Vehicle/Roadtype").onChange(new DatabaseChangeListener() {
+        FirebaseDB.getInstance("Vehicle/Roattype").onChange(new DatabaseChangeListener() {
             @Override
             public void onSuccess(Object value) {
                 if(value.toString().equals("1")){
