@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class DeviceClient {
-    private static final String TAG = "SensorDashboard/DeviceClient";
+    private static final String TAG = "Test";
     private static final int CLIENT_CONNECTION_TIMEOUT = 15000;
 
     public static DeviceClient instance;
@@ -48,28 +48,12 @@ public class DeviceClient {
     }
 
     public void setSensorFilter(int filterId) {
-        Log.d(TAG, "Now filtering by sensor: " + filterId);
+        Log.d(TAG, "by sensor: " + filterId);
 
         this.filterId = filterId;
     }
 
     public void sendSensorData(final int sensorType, final int accuracy, final long timestamp, final float[] values) {
-        long t = System.currentTimeMillis();
-
-        long lastTimestamp = lastSensorData.get(sensorType);
-        long timeAgo = t - lastTimestamp;
-
-        if (lastTimestamp != 0) {
-            if (filterId == sensorType && timeAgo < 100) {
-                return;
-            }
-
-            if (filterId != sensorType && timeAgo < 3000) {
-                return;
-            }
-        }
-
-        lastSensorData.put(sensorType, t);
 
         executorService.submit(new Runnable() {
             @Override
@@ -91,6 +75,7 @@ public class DeviceClient {
         dataMap.getDataMap().putInt("Accuracy", accuracy);
         dataMap.getDataMap().putLong("Time", timestamp);
         dataMap.getDataMap().putFloatArray("Value", values);
+        Log.d("Unique", Arrays.toString(values));
 
         PutDataRequest putDataRequest = dataMap.asPutDataRequest();
         send(putDataRequest);

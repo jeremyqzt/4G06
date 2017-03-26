@@ -45,6 +45,8 @@ import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
 
+import static java.lang.StrictMath.abs;
+
 public class SummaryFragment extends Fragment implements
         DataApi.DataListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private GoogleApiClient mGoogleApiClient;
@@ -83,7 +85,7 @@ public class SummaryFragment extends Fragment implements
     private Runnable runnableCode = new Runnable() {
         @Override
         public void run() {
-            handler.postDelayed(runnableCode, 200);
+            handler.postDelayed(runnableCode, 1000);
 
             //m_temp = listener.getLight();
             m_prox = listener.getProx();
@@ -97,14 +99,10 @@ public class SummaryFragment extends Fragment implements
 
             InformationSet inst = new InformationSet();
 
-
-            String testing = String.valueOf(heartrate) +";" + String.valueOf(m_prox) +";" + String.valueOf(m_light);
-//            testWarn.setText(testing);
             concat[0] = heartrate;
             concat[1] = m_prox;
             concat[2] = m_light;
             concat[3] = m_temp;
-
             inst.setAcc(m_accel);
             inst.setGyro(m_gyro);
             inst.setHeartProxLight(concat);
@@ -113,10 +111,7 @@ public class SummaryFragment extends Fragment implements
 
             ref.child("InformationSet").setValue(inst);
 
-//            heartRateText.setText(heartrate + " BPM");
-//            Log.d("Values", "Lum " + Float.toString(m_light));
             lightText.setText(Float.toString(m_light) + " Lux");
-//            Log.d("Values", "Temp " + Float.toString(m_temp));
             tempText.setText(Float.toString(m_temp) + " C");
 
 
@@ -291,37 +286,6 @@ public class SummaryFragment extends Fragment implements
     }
 
 
-//    private void feedData(){
-//        Log.d("chart", "feedData() called");
-//        if (chartThread != null){
-//            chartThread.interrupt();
-//            Log.d("chart","thread killed");
-//        }
-//        final Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                addEntry(0);
-//            }
-//        };
-//        chartThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                for (int i = 0; i < 10; i++) {
-//                    // Don't generate garbage runnables inside the loop.
-//                    getActivity().runOnUiThread(runnable);
-//
-//                    try {
-//                        Thread.sleep(2000);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        });
-//
-//        chartThread.start();
-//    }
-
     @Override
     public void onResume(){
         super.onResume();
@@ -362,15 +326,31 @@ public class SummaryFragment extends Fragment implements
             if (event.getType() == DataEvent.TYPE_CHANGED) {
                 DataItem item = event.getDataItem();
                 DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-//                rate.setText(String.valueOf(dataMap.getFloatArray(KEY)[1]));
                 float [] holder = dataMap.getFloatArray(KEY);
                 heartrate = Math.round(holder[0]);
                 light = Math.round(holder[1]);
                 watchgyro [0] = holder [2];
                 watchgyro [1] = holder [3];
                 watchgyro [2] = holder [4];
+                Log.d("This", "Triggered");
+                Log.d("Time Testing", String.valueOf(watchgyro[0]) + "," + String.valueOf(watchgyro[1]) + "," + String.valueOf(watchgyro[2]));
 
-//                myBlink.updateMobileValuesFromDevice(heartrate, m_prox,m_temp,m_light,m_accel);
+                if (abs(holder[0]) > 30 ||  abs(holder[1]) > 30 || abs(holder[2]) > 30){ //Crash
+                    Firebase ref = new Firebase(Config.FIREBASE_URL);
+                    InformationSet inst = new InformationSet();
+                    concat[0] = heartrate;
+                    concat[1] = m_prox;
+                    concat[2] = m_light;
+                    concat[3] = m_temp;
+                    inst.setAcc(m_accel);
+                    inst.setGyro(m_gyro);
+                    inst.setHeartProxLight(concat);
+                    inst.setWatchLight(light);
+                    inst.setWatchGyro(watchgyro);
+                    ref.child("InformationSet").setValue(inst);
+                    Log.d("This", "Triggered2");
+                }
+
             }
         }
     }

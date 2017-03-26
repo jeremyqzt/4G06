@@ -1,6 +1,7 @@
 package com.example.jeremy.androidwearheartrate;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -29,6 +30,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.lang.StrictMath.abs;
+
 /**
  * Created by kevind on 2017-02-26.
  */
@@ -48,7 +51,9 @@ public class HealthFragment extends Fragment{
     TextView desc;
     double rotation = 0;
     int status = 1;
+    int sdevcount = 0;
     int count = 0;
+    int twominute = 0;
     private int acc_array = 0;
     private float [] watchgyro = {0,0,0};
     private float [] gyro = {0,0,0};
@@ -57,7 +62,10 @@ public class HealthFragment extends Fragment{
     int genderdev = 0;
     int speedcount = 0;
     int wiper = 0;
+    int carstdev = 0;
+    int carsavg = 0;
     int acccount = 0;
+    long start, end;
     float temp = 20;
     double heartavg = 0.0;
     double stdev = 0.0;
@@ -75,8 +83,8 @@ public class HealthFragment extends Fragment{
     private static String green = "#2E7D32";
     private Activity myActivity;
     int flag = 0;
-    MediaPlayer mp;
-
+    MediaPlayer drowsymp, monomp, mondecmp,speedmp, speedweathermp, nonlinearmp, fatiguemp, crashmp;
+    private String roadtype = "";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.health_page, container, false);
@@ -94,7 +102,17 @@ public class HealthFragment extends Fragment{
         startListeners();
 
         updateParams();
-        mp = MediaPlayer.create(this.getActivity(), R.raw.drowsy);
+        drowsymp = MediaPlayer.create(this.getActivity(), R.raw.drowsy);
+        monomp = MediaPlayer.create(this.getActivity(), R.raw.mono);
+        mondecmp = MediaPlayer.create(this.getActivity(), R.raw.monodec);
+        speedmp = MediaPlayer.create(this.getActivity(), R.raw.speed);
+        speedweathermp = MediaPlayer.create(this.getActivity(), R.raw.speedweather);
+        nonlinearmp = MediaPlayer.create(this.getActivity(), R.raw.nonlinear);
+        fatiguemp = MediaPlayer.create(this.getActivity(), R.raw.fatigue);
+        crashmp = MediaPlayer.create(this.getActivity(), R.raw.crash);
+
+        start = System.currentTimeMillis();
+
         return view;
     }
 
@@ -105,6 +123,28 @@ public class HealthFragment extends Fragment{
 //        Log.d("hfrag", "Health: "+ bundle.getInt("heartrate")
     }
 
+    public void playmp(String what){
+        if (System.currentTimeMillis() - start > 10000) {
+            if (what.equals("Drowsy")) {
+                drowsymp.start();
+            } else if (what.equals("Mono")) {
+                monomp.start();
+            } else if (what.equals("Monodec")) {
+                mondecmp.start();
+            } else if (what.equals("Speed")) {
+                speedmp.start();
+            } else if (what.equals("SpeedWeather")) {
+                speedweathermp.start();
+            } else if (what.equals("NonLinear")) {
+                nonlinearmp.start();
+            } else if (what.equals("Fatigue")) {
+                fatiguemp.start();
+            }else if (what.equals("Crash")) {
+                crashmp.start();
+            }
+            start = System.currentTimeMillis();
+        }
+    }
     //pass data between fragments with bundle
     class checkBundle implements Runnable{
         @Override
@@ -172,6 +212,11 @@ public class HealthFragment extends Fragment{
                 watchgyro[0] = Float.parseFloat(vals.get(0).toString());
                 watchgyro[1] = Float.parseFloat(vals.get(1).toString());
                 watchgyro[2] = Float.parseFloat(vals.get(2).toString());
+
+                if ((abs(watchgyro[0]) > 30) || abs(watchgyro[1]) > 30 || abs(watchgyro[2]) > 30){ //Crash Detected
+                    write_curr();
+                }
+
             }
 
             @Override
@@ -179,6 +224,30 @@ public class HealthFragment extends Fragment{
 
             }
         });
+        FirebaseDB.getInstance("Vehicle/sDev").onChange(new DatabaseChangeListener() {
+            @Override
+            public void onSuccess(Object value) {
+                carstdev = Math.round(Float.parseFloat((value.toString())));
+            }
+
+            @Override
+            public void onFail(String value) {
+
+            }
+        });
+
+        FirebaseDB.getInstance("Vehicle/sAverage").onChange(new DatabaseChangeListener() {
+            @Override
+            public void onSuccess(Object value) {
+                carsavg = Math.round(Float.parseFloat(value.toString()));
+            }
+
+            @Override
+            public void onFail(String value) {
+
+            }
+        });
+
 
 
         FirebaseDB.getInstance("openCV").onChange(new DatabaseChangeListener() {
@@ -206,7 +275,21 @@ public class HealthFragment extends Fragment{
 
             }
         });
+        FirebaseDB.getInstance("Vehicle/Roattype").onChange(new DatabaseChangeListener() {
+            @Override
+            public void onSuccess(Object value) {
+                if(value.toString().equals("1")){
+                    roadtype = "Highway";
+                }else{
+                    roadtype = "Local";
+                }
+            }
 
+            @Override
+            public void onFail(String value) {
+
+            }
+        });
         FirebaseDB.getInstance("InformationSet/gyro").onChange(new DatabaseChangeListener() {
             @Override
             public void onSuccess(Object value) {
@@ -277,9 +360,20 @@ public class HealthFragment extends Fragment{
         Firebase ref = new Firebase(Config.FIREBASE_URL);
 
         Map map = new HashMap();
-        map.put("Speed",carSpeed );
         map.put("Time", currentDateTimeString);
-        map.put("Time2", currentDateTimeString);
+        map.put("Type", "Crash Report");
+        map.put("Speed", carSpeed );
+        map.put("Drowsy", sleep.equals("true") );
+        map.put("HeartRate", heartrate );
+        map.put("HeartRateAvg", heartavg );
+        if (abs(watchgyro[0]) > 40 || abs(watchgyro[0]) > 40 || abs(watchgyro[0]) > 40){
+            map.put("Injuried", "Unlikely");
+        }else{
+            map.put("Injuried", "Potential");
+        }
+        double totalG = Math.sqrt(watchgyro[0]*watchgyro[0] + watchgyro[1]*watchgyro[1] + watchgyro[2]*watchgyro[2])/10;
+        map.put("TotalGForce", totalG );
+        playmp("Crash");
         ref.push().setValue(map);
 
 
@@ -310,10 +404,8 @@ public class HealthFragment extends Fragment{
                     //checking steering wheel positions
 
 
-
                     count++; //Internal Usage
                     if(count == 5){
-                        write_curr();
                         count = 0;
                         if(watchgyro[2] > 0 && watchgyro[2]<8){
                             status = 0;
@@ -329,13 +421,13 @@ public class HealthFragment extends Fragment{
                     //Turning radius
 
                     //Acceleration checks
-                    if(acc_array > 15){
+                    if(acc_array > 22){
                         speedcount++;
                     }else{
                         speedcount = 0;
                     }
 
-                    if(speedcount > 3 && status != 0){
+                    if(speedcount > 3 && status != 0 && !roadtype.equals("Highway")){
                         systemText.setText("Speed");
                         myActivity.runOnUiThread(systemText);
                         descriptionText.setText("Blink has detected "+ Math.round(10*(acc_array/10))/10 + " Gs of acceleration for " + speedcount + "s now, consider slowing down");
@@ -347,30 +439,37 @@ public class HealthFragment extends Fragment{
 
                     //calc rotation
                     rotation = Math.sqrt(gyro[0]*gyro[0]+gyro[1]*gyro[1]+gyro[2]*gyro[2]);
-                    if(rotation > 0.40){
-                        if(rotation > 0.50){
-                            systemText.setText("Rotation");
-                            myActivity.runOnUiThread(systemText);
-                            descriptionText.setText("Significant Rotation Detected: "+ rotation);
-                            myActivity.runOnUiThread(descriptionText);
-                            colorcore.setColor(red);
-                            myActivity.runOnUiThread(colorcore);
-                            good = false;
-                        }
+                    if(rotation > 1.0){
+                        systemText.setText("Rotation");
+                        myActivity.runOnUiThread(systemText);
+                        descriptionText.setText("Significant Rotation Detected: "+ rotation);
+                        myActivity.runOnUiThread(descriptionText);
+                        colorcore.setColor(red);
+                        myActivity.runOnUiThread(colorcore);
+                        good = false;
                         myActivity.runOnUiThread(flashcore);
-                        if(wiper == 1){
-                            systemText.setText("Rotation");
-                            myActivity.runOnUiThread(systemText);
-                            descriptionText.setText("High Rotation Vector: "+ rotation);
-                            myActivity.runOnUiThread(descriptionText);
-                            colorcore.setColor(red);
-                            myActivity.runOnUiThread(colorcore);
-                            good = false;
+                    }
+                    if(wiper == 1){
+                        sdevcount += 1;
+                        if (sdevcount > 9) {
+                            if (carSpeed > carsavg + 2*carstdev) { //In Weather and Very Fast!
+                                systemText.setText("Speed");
+                                myActivity.runOnUiThread(systemText);
+                                descriptionText.setText("Speed is Abnormally high, over: " + String.valueOf((Math.round(carSpeed - carsavg)/carstdev)) +" past your average");
+                                myActivity.runOnUiThread(descriptionText);
+                                colorcore.setColor(red);
+                                myActivity.runOnUiThread(colorcore);
+                                good = false;
+                                playmp("SpeedWeather");
+
+                            }
                         }
+                    }else{
+                        sdevcount = 0;
                     }
 
                     //Non-linear accel
-                    if(vectoracc[0] > 3 && vectoracc[2] > 15){
+                    if(abs(vectoracc[0]) > 3 && vectoracc[2] > 15){ //Hard to Trigger
                         acccount++;
                     }else{
                         acccount = 0;
@@ -386,18 +485,8 @@ public class HealthFragment extends Fragment{
                             myActivity.runOnUiThread(descriptionText);
                             colorcore.setColor(red);
                             myActivity.runOnUiThread(colorcore);
-                            //flash
                             good = false;
-                        }
-                        if(wiper == 1){
-                            systemText.setText("Weather");
-                            myActivity.runOnUiThread(systemText);
-                            descriptionText.setText("You are driving too fast for these conditions");
-                            myActivity.runOnUiThread(descriptionText);
-                            colorcore.setColor(red);
-                            myActivity.runOnUiThread(colorcore);
-                            //flash
-                            good = false;
+                            playmp("NonLinear");
                         }
                     }
 
@@ -443,7 +532,8 @@ public class HealthFragment extends Fragment{
 
 
                     double hdev = (heartrate - heartavg)/stdev;
-                    hdev = Math.round((hdev*10)/10);
+                    hdev = Math.round(hdev);
+
                     if((heartrate < 180+genderdev) && heartrate > (40+genderdev)){
                         if(heartrate > heartavg){
                             if((heartrate - heartavg) > 1.5*stdev){
@@ -474,6 +564,8 @@ public class HealthFragment extends Fragment{
                                     colorcore.setColor(red);
                                     myActivity.runOnUiThread(colorcore);
                                     good = false;
+                                    playmp("Mono");
+
                                     //blink core
                                 }
                                 if(acccount > 3){
@@ -490,7 +582,7 @@ public class HealthFragment extends Fragment{
                         }else{
                             if(heartavg - heartrate > 1.5*stdev){
                                 if(vectoracc[2] > 22){
-                                    systemText.setText("Fainting");
+                                    systemText.setText("Abnormally High Heart Rate");
                                     myActivity.runOnUiThread(systemText);
                                     descriptionText.setText("Blink has detected abnormal heart rate readings, over " + hdev +" past your normal range, considering pulling over");
                                     myActivity.runOnUiThread(descriptionText);
@@ -498,7 +590,7 @@ public class HealthFragment extends Fragment{
                                     myActivity.runOnUiThread(colorcore);
                                     good = false;
                                 }
-                                if(rotation > 0.45){
+                                if(rotation > 1.0){
                                     systemText.setText("Heart Rate");
                                     myActivity.runOnUiThread(systemText);
                                     descriptionText.setText("Blink has detected abnormal heart rate readings, over " + hdev +" past your normal range, considering pulling over");
@@ -515,6 +607,7 @@ public class HealthFragment extends Fragment{
                                     colorcore.setColor(red);
                                     myActivity.runOnUiThread(colorcore);
                                     good = false;
+                                    playmp("Monodec");
                                 }
                                 if(acccount > 3){
                                     systemText.setText("Acceleration & Stress");
@@ -539,6 +632,23 @@ public class HealthFragment extends Fragment{
                         myActivity.runOnUiThread(colorcore);
                         good = false;
                     }
+                    if ((light < 50 && watchLight < 50) && (Math.round(acc_array) > 10) && (heartrate < 60 + genderdev)){
+                        twominute += 1;
+                    }else{
+                        twominute = 0;
+                    }
+
+                    if (twominute > 120){
+                        playmp("Fatigue");
+                        good = false;
+                        systemText.setText("Fatigue");
+                        myActivity.runOnUiThread(systemText);
+                        descriptionText.setText("You Maybe Unfit to Drive in Current Conditions");
+                        myActivity.runOnUiThread(descriptionText);
+                        colorcore.setColor(red);
+                        myActivity.runOnUiThread(colorcore);
+                    }
+
 
                     if (light > 4000){
                         systemText.setText("Brightness: Extreme");
@@ -582,7 +692,7 @@ public class HealthFragment extends Fragment{
                         myActivity.runOnUiThread(colorcore);
                         myActivity.runOnUiThread(flashcore);
                         good = false;
-                        mp.start();
+                        playmp("Drowsy");
                     }else{
                         //everything is normal
                         alertBarChange.incrementProgress();
@@ -616,7 +726,7 @@ public class HealthFragment extends Fragment{
 //                    Log.d("hfrag",""+alertBarChange.getTotalAlert());
 //                    Log.d("hfrag", "=======");
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(800);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

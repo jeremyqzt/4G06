@@ -61,7 +61,6 @@ public class MainActivity extends Activity implements SensorEventListener{
 
     private DeviceClient client;
 
-    private GoogleApiClient mGoogleApiClient;
     private TextView rate;
     private TextView accuracy;
     private TextView sensorInformation;
@@ -74,7 +73,7 @@ public class MainActivity extends Activity implements SensorEventListener{
     private float[] concat = {0,0,0,0,0};
 
     private TextView Heartrate;
-
+    private boolean lock = true;
     private TextView x;
     private TextView y;
     private TextView z;
@@ -107,7 +106,7 @@ public class MainActivity extends Activity implements SensorEventListener{
 
         mSensorManager.registerListener(this, this.mHeartRateSensor, SensorManager.SENSOR_DELAY_UI);
         mSensorManager.registerListener(this, this.mLightSensor, 25*SensorManager.SENSOR_DELAY_UI);
-        mSensorManager.registerListener(this, this.mAccelerationSensor, 25*SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(this, this.mAccelerationSensor, 15*SensorManager.SENSOR_DELAY_UI);
 
 //        x = (TextView) findViewById(R.id.x);
 //        y = (TextView) findViewById(R.id.y);
@@ -132,41 +131,40 @@ public class MainActivity extends Activity implements SensorEventListener{
 
         if (sensor.getType() == Sensor.TYPE_HEART_RATE) {
             currentHR = sensorEvent.values[0];
-            Log.d("test",""+currentHR);
-//            accuracy.setText("Accuracy: " + sensorEvent.accuracy);
-//            sensorInformation.setText(sensorEvent.sensor.toString());
-
         } else if (sensor.getType() == Sensor.TYPE_LIGHT) {
             currentLight = sensorEvent.values[0];
-
         } else if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             currentAcc[0] = sensorEvent.values[0];
             currentAcc[1] = sensorEvent.values[1];
             currentAcc[2] = sensorEvent.values[2];
-
+            if (abs(currentAcc[0]) > 30 || abs(currentAcc[1]) > 30 || abs(currentAcc[2]) > 30){
+                lock = false;
+                Log.d("Time Testing", "Significant");
+                concat[2] = currentAcc[0];
+                concat[3] = currentAcc[1];
+                concat[4] = currentAcc[2];
+            }
         }
-        concat[0] = currentHR;
-        concat[1] = currentLight;
-        concat[2] = currentAcc[0];
-        concat[3] = currentAcc[1];
-        concat[4] = currentAcc[2];
-//
-//        Log.d("Concat0", String.valueOf(concat[0]));
-//        Log.d("Concat1", String.valueOf(concat[1]));
-//        Log.d("Concat2", String.valueOf(concat[2]));
+        if (lock){
+            concat[0] = currentHR;
+            concat[1] = currentLight;
+            concat[2] = currentAcc[0];
+            concat[3] = currentAcc[1];
+            concat[4] = currentAcc[2];
+        }
+
+        Log.d("Concat0", String.valueOf(concat[2]));
+        Log.d("Concat1", String.valueOf(concat[3]));
+        Log.d("Concat2", String.valueOf(concat[4]));
 
         end = System.currentTimeMillis();
-        if (abs(currentAcc[0]) > 22 || abs(currentAcc[1]) > 22 || abs(currentAcc[2]) > 22){
-            client.sendSensorData(sensorEvent.sensor.getType(), sensorEvent.accuracy, sensorEvent.timestamp, concat); //Timed Event
-            start = end;
-            Log.d("Shock Testing", "Sent");
-            vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
-        }
 
-        if ((end - start) > 1000){
+
+        if ((end - start) > 1000){ //once per second to not overload
             client.sendSensorData(sensorEvent.sensor.getType(), sensorEvent.accuracy, sensorEvent.timestamp, concat); //Timed Event
             start = end;
             Log.d("Time Testing", "Sent");
+            lock = true;
         }
 
         if (concat[0] > 0){ //Heart Rate is not 0
