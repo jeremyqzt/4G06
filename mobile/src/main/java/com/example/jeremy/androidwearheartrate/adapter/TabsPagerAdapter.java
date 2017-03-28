@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
 
 import com.example.jeremy.androidwearheartrate.HealthFragment;
+import com.example.jeremy.androidwearheartrate.InformationFragment;
 import com.example.jeremy.androidwearheartrate.SummaryFragment;
 import com.example.jeremy.androidwearheartrate.VehicleFragment;
 
@@ -17,7 +18,7 @@ import com.example.jeremy.androidwearheartrate.VehicleFragment;
 
 public class TabsPagerAdapter extends FragmentPagerAdapter{
     final int PAGE_COUNT = 3;
-    private String tabs[] = new String[]{"Summary","Health","Vehicle"};
+    private String tabs[] = new String[]{"Health","Summary","Information"};
     private Context context;
     private Bundle mbundle;
 
@@ -41,7 +42,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter{
                 hTab.setArguments(mbundle);
                 return hTab;
             case 2:
-                VehicleFragment vTab = new VehicleFragment();
+                InformationFragment vTab = new InformationFragment();
                 vTab.setArguments(mbundle);
                 return vTab;
             default:

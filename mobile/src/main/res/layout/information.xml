@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:weightSum="1">
+
+    <TextView
+        android:id="@+id/contact_form_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="5dp"
+        android:text="User Information"
+        android:textColor="@color/cardview_dark_background"
+        android:textSize="30sp"
+        android:typeface="serif"
+        android:textAlignment="center" />
+
+    <TextView
+        android:text="Hello, Jeremy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/summaryhead"
+        android:textStyle="normal|bold"
+        android:textSize="18sp" />
+
+    <TextView
+        android:text="According to our database, you're a male, 22 years of age with no preexisting conditions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/summary"
+        android:layout_weight="0.09" />
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="5dp"
+        android:text="Update Information"
+        android:textColor="@color/cardview_dark_background"
+        android:textSize="30sp"
+        android:typeface="serif"
+        android:textAlignment="center"
+        android:layout_weight="0.28" />
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:hint="Name"
+        android:id="@+id/nom"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:hint="Age"
+        android:id="@+id/age"
+        android:inputType="number" />
+
+    <TextView
+        android:text="Please Select a Gender:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView13"
+        android:textSize="18sp" />
+
+    <Spinner
+        android:entries="@array/Genders"
+        android:prompt="@string/GenderPromp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/gender"
+        android:layout_weight="0.07" />
+
+    <TextView
+        android:text="Any Conditions We Should Look Out For?"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView14"
+        android:textSize="18sp" />
+
+    <Spinner
+        android:entries="@array/Conditions"
+        android:prompt="@string/ConditionsPromp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cond"
+        android:layout_weight="0.15" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/colorPrimaryDark"
+        android:elevation="4dp"
+        android:paddingLeft="70dp"
+        android:paddingRight="70dp"
+        android:text="Update"
+        android:id="@+id/updatebtn"
+        android:textColor="#fff" />
+
+    <TextView
+        android:text="\n Discliamer: All content found in Blink, including: text, images, audio, or other formats were created for informational purposes only. The Content is not intended to be a substitute for professional medical advice. Blink is not responsible for any harm as caused by its recommendations. The program and its content are provided without warranty or implied warranty."
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView15"
+        android:textSize="10sp" />
+</LinearLayout>

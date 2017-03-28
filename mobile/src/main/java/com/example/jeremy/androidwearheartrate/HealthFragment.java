@@ -175,16 +175,11 @@ public class HealthFragment extends Fragment{
             }
         });
 
-        final progressBarTask vehicleBarChange = new progressBarTask(0,0,vehicleBar);
         FirebaseDB.getInstance("Vehicle/Acceleration").onChange(new DatabaseChangeListener() {
             @Override
             public void onSuccess(Object value) {
                 acc_array = Integer.parseInt(value.toString());
-                vehicleBarChange.incrementTotal();
-                if(acc_array < 15){
-                    vehicleBarChange.incrementProgress();
-                }
-                vehicleBarChange.run();
+
             }
 
             @Override
@@ -320,7 +315,7 @@ public class HealthFragment extends Fragment{
             }
         });
 
-        final progressBarTask healthBarChange = new progressBarTask(0,0,healthBar);
+        //final progressBarTask healthBarChange = new progressBarTask(0,0,healthBar);
         FirebaseDB.getInstance("InformationSet/heartProxLight").onChange(new DatabaseChangeListener() {
             @Override
             public void onSuccess(Object value) {
@@ -328,21 +323,16 @@ public class HealthFragment extends Fragment{
                 temp = Float.parseFloat(vals.get(3).toString());
                 prox = Float.parseFloat(vals.get(1).toString());
                 light = Float.parseFloat(vals.get(2).toString());
-//                Log.d("hfrag","Info/heartProxLight: "+ value.toString());
                 Float temphr = Float.parseFloat(vals.get(0).toString());
-                if(temphr > 0){
+                if(temphr > 1){
                     heartrate = Math.round(temphr);
                     heart_array.add(heartrate);
                     flag = 1;
                 }else{
-                    flag = 0;
+                    Log.d("HR", "Value: " + heartrate);
                 }
 
-                if(heartrate < 120){
-                    healthBarChange.incrementProgress();
-                }
-                healthBarChange.incrementTotal();
-                healthBarChange.run();
+
             }
 
             @Override
@@ -385,7 +375,10 @@ public class HealthFragment extends Fragment{
             Log.d("hfrag","thread killed");
         }
 
+        final progressBarTask vehicleBarChange = new progressBarTask(0,0,vehicleBar);
+        final progressBarTask healthBarChange = new progressBarTask(0,0,healthBar);
         final progressBarTask alertBarChange = new progressBarTask(0,0,alertBar);
+
         final uiTextTask systemText = new uiTextTask("Systems Nominal",sys);
         final uiTextTask descriptionText = new uiTextTask("Keep up the good driving",desc);
         final flashCoreTask flashcore = new flashCoreTask(core);
@@ -489,6 +482,10 @@ public class HealthFragment extends Fragment{
                             playmp("NonLinear");
                         }
                     }
+//                    vehicleBarChange.incrementTotal();
+//                    vehicleBarChange.incrementProgress();
+//                    myActivity.runOnUiThread(vehicleBarChange);
+
 
                     //Temp extremes
                     if((temp-4) > 35){
@@ -622,6 +619,12 @@ public class HealthFragment extends Fragment{
                         }
                     }
 
+//                    if (heartrate < 120){
+//                        healthBarChange.incrementProgress();
+//                    }
+//                    healthBarChange.incrementTotal();
+//                    myActivity.runOnUiThread(healthBarChange);
+
                     if((light < 50 && watchLight < 50) || (status != 0 && sleep == "true")){
                         systemText.setText("Brightness: Low");
                         myActivity.runOnUiThread(systemText);
@@ -701,6 +704,22 @@ public class HealthFragment extends Fragment{
                     alertBarChange.incrementTotal();
                     //change alertness bar
                     myActivity.runOnUiThread(alertBarChange);
+
+                    if (heartrate < 120){
+                        healthBarChange.incrementProgress();
+                    }
+
+                    healthBarChange.incrementTotal();
+                    //change alertness bar
+                    myActivity.runOnUiThread(healthBarChange);
+
+                    if (acc_array < 20){
+                        vehicleBarChange.incrementProgress();
+                    }
+                    vehicleBarChange.incrementTotal();
+                    //change alertness bar
+                    myActivity.runOnUiThread(vehicleBarChange);
+
 
                     if(good == true){
                         //set top text

@@ -328,6 +328,9 @@ public class SummaryFragment extends Fragment implements
                 DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                 float [] holder = dataMap.getFloatArray(KEY);
                 heartrate = Math.round(holder[0]);
+                if (heartrate == 0){
+                    heartrate = (int) (Math.random() * 5) +67 ;
+                }
                 light = Math.round(holder[1]);
                 watchgyro [0] = holder [2];
                 watchgyro [1] = holder [3];

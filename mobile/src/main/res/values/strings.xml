@@ -13,5 +13,23 @@
     <string name="speed"><u>Speed</u></string>
     <string name="accel"><u>Acceleration</u></string>
     <string name="kmsquare">km/hr<sup>2</sup></string>
+    <string name="GenderPromp">Pick your gender</string>
 
+    <string-array name="Genders">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Prefer Not to Disclose</item>
+    </string-array>
+
+    <string name="ConditionsPromp">What should we look for?</string>
+
+    <string-array name="Conditions">
+        <item>Nothing in Particular</item>
+        <item>Heart</item>
+        <item>Light Sensitivity</item>
+        <item>Car Sickness</item>
+        <item>Abnormal Driving Hours</item>
+        <item>Abnormal Driving Conditions</item>
+        <item>All Equally</item>
+    </string-array>
 </resources>

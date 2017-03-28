@@ -27,6 +27,7 @@ public class DrivingActivity extends FragmentActivity {
         final ProgressBar faceRateBar = (ProgressBar) findViewById(R.id.face_bar);
         final ProgressBar readyRateBar = (ProgressBar) findViewById(R.id.readiness_bar);
         final TextView warningBox = (TextView) findViewById(R.id.warning_box);
+
         FirebaseDB.getInstance("profile").onChange(new DatabaseChangeListener() {
             @Override
             public void onSuccess(Object value) {

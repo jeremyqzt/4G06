@@ -113,8 +113,8 @@
             app:rcIconPadding="5dp"
             app:rcIconSize="50dp"
             app:rcIconSrc="@drawable/ic_mood_black_24dp"
-            app:rcMax="150"
-            app:rcProgress="50"
+            app:rcMax="100"
+            app:rcProgress="100"
             app:rcProgressColor="@color/custom_progress_orange_progress"
             app:rcRadius="10dp" />
     </LinearLayout>
@@ -148,7 +148,7 @@
             app:rcIconPadding="5dp"
             app:rcIconSize="50dp"
             app:rcIconSrc="@drawable/ic_directions_car_black_24dp"
-            app:rcMax="150"
+            app:rcMax="100"
             app:rcProgress="100"
             app:rcProgressColor="@color/custom_progress_blue_progress"
             app:rcRadius="10dp" />
