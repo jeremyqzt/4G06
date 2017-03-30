@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.jeremy.androidwearheartrate.database.DatabaseChangeListener;
 import com.example.jeremy.androidwearheartrate.database.FirebaseDB;
@@ -62,6 +63,7 @@ public class InformationFragment extends Fragment {
         person.setGender(gend);
         ref.child("Person").setValue(person);
         doSomethingLocal();
+        Toast.makeText(getActivity(),"Successfully Updated!", Toast.LENGTH_SHORT).show();
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){

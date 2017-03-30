@@ -124,6 +124,7 @@ public class SummaryFragment extends Fragment implements
         public void onReceive(Context c, Intent intent) {
             int temperature = intent.getIntExtra("temperature", 0);
             m_temp = (float)temperature / 10;
+            m_temp -=10;
         }
     };
 
@@ -131,6 +132,7 @@ public class SummaryFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         Context mActivity = getActivity();
         View view = inflater.inflate(R.layout.summary_page, container, false);
+        mActivity.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
         bundle = this.getArguments();
 
@@ -146,7 +148,6 @@ public class SummaryFragment extends Fragment implements
         listener = new MobileSensorEventListener(mActivity);
         handler.post(runnableCode);
 
-        mActivity.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
             @Override
             public void onResult(NodeApi.GetConnectedNodesResult getConnectedNodesResult) {
@@ -155,6 +156,7 @@ public class SummaryFragment extends Fragment implements
                 }
             }
         });
+
         //init Line Chart from XML
         mChart = (LineChart) view.findViewById(R.id.chart);
 

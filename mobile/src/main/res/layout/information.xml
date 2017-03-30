@@ -92,7 +92,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/cond"
-        android:layout_weight="0.15" />
+        android:layout_weight="0.39" />
 
     <Button
         android:layout_width="wrap_content"
@@ -107,7 +107,7 @@
         android:textColor="#fff" />
 
     <TextView
-        android:text="\n Discliamer: All content found in Blink, including: text, images, audio, or other formats were created for informational purposes only. The Content is not intended to be a substitute for professional medical advice. Blink is not responsible for any harm as caused by its recommendations. The program and its content are provided without warranty or implied warranty."
+        android:text="\nDiscliamer: All content found in Blink, including: text, images, audio, or other formats were created for informational purposes only. The Content is not intended to be a substitute for professional medical advice. Blink is not responsible for any harm as caused by its recommendations. The program and its content are provided without warranty or implied warranty."
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textView15"
