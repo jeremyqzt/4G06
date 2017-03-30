@@ -81,7 +81,9 @@ public class HealthFragment extends Fragment{
     boolean monodec = false;
     private static String red = "#C62828";
     private static String orange = "#F9A825";
-    private static String green = "#2E7D32";
+    //private static String green = "#2E7D32";
+    private static String green = "#0288D1";
+
     private Activity myActivity;
     int flag = 0;
     int speedflag = 0;
@@ -89,7 +91,7 @@ public class HealthFragment extends Fragment{
     double agedecider = 2; //2.5 low, 2 med, 1.5 high
     int accfalg = 0;
     SpeedService speed;
-    MediaPlayer drowsymp, monomp, mondecmp,speedmp, speedweathermp, nonlinearmp, fatiguemp, crashmp;
+    MediaPlayer drowsymp, monomp, mondecmp,speedmp, speedweathermp, nonlinearmp, fatiguemp, crashmp, rotmp, srotmp, ceasemp;
     private String roadtype = "";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -116,7 +118,9 @@ public class HealthFragment extends Fragment{
         nonlinearmp = MediaPlayer.create(this.getActivity(), R.raw.nonlinear);
         fatiguemp = MediaPlayer.create(this.getActivity(), R.raw.fatigue);
         crashmp = MediaPlayer.create(this.getActivity(), R.raw.crash);
-
+        rotmp = MediaPlayer.create(this.getActivity(), R.raw.rot);
+        srotmp = MediaPlayer.create(this.getActivity(), R.raw.srot);
+        ceasemp = MediaPlayer.create(this.getActivity(), R.raw.cease);
         start = System.currentTimeMillis();
 
         return view;
@@ -147,6 +151,12 @@ public class HealthFragment extends Fragment{
                 fatiguemp.start();
             }else if (what.equals("Crash")) {
                 crashmp.start();
+            }else if (what.equals("Rot")) {
+                rotmp.start();
+            }else if (what.equals("Srot")) {
+                srotmp.start();
+            }else if (what.equals("Cease")) {
+                ceasemp.start();
             }
             start = System.currentTimeMillis();
         }
@@ -518,7 +528,9 @@ public class HealthFragment extends Fragment{
                         myActivity.runOnUiThread(colorcore);
                         good = false;
                         myActivity.runOnUiThread(flashcore);
+                        playmp("Srot");
                     }
+
                     if(wiper == 1){
                         sdevcount += 1;
                         if (sdevcount > 9) {
@@ -548,7 +560,7 @@ public class HealthFragment extends Fragment{
                     if(acccount > 3){
                         descriptionText.setText("Movement is Constantly Non Linear");
                         myActivity.runOnUiThread(descriptionText);
-                        if(vectoracc[2] > 22){
+                        if(acc_array > 22){
                             systemText.setText("Extreme Acceleration");
                             myActivity.runOnUiThread(systemText);
                             descriptionText.setText("Blink has detected extreme and non linear acceleration, consider slowing down");
@@ -620,14 +632,15 @@ public class HealthFragment extends Fragment{
                                 //blink core
                                 good = false;
 
-                                if(vectoracc[2] > 22){
-                                    systemText.setText("Acceleration & Stress");
+                                if(acc_array > 22){
+                                    systemText.setText("Erratic Driving Detected");
                                     myActivity.runOnUiThread(systemText);
                                     descriptionText.setText("Blink has detected eratic driving behavior, consider slowing down or taking a break");
                                     myActivity.runOnUiThread(descriptionText);
                                     colorcore.setColor(red);
                                     myActivity.runOnUiThread(colorcore);
                                     good = false;
+                                    playmp("Cease");
                                     //blink core
                                 }
                                 if(mono){
@@ -643,19 +656,21 @@ public class HealthFragment extends Fragment{
                                     //blink core
                                 }
                                 if(acccount > 3){
-                                    systemText.setText("Acceleration & Stress");
+                                    systemText.setText("Erratic Driving Detected");
                                     myActivity.runOnUiThread(systemText);
                                     descriptionText.setText("Blink has detected eratic driving behavior, consider slowing down or taking a break");
                                     myActivity.runOnUiThread(descriptionText);
                                     colorcore.setColor(red);
                                     myActivity.runOnUiThread(colorcore);
                                     good = false;
+                                    playmp("Cease");
+
                                     //blink core
                                 }
                             }
                         }else{
                             if(heartavg - heartrate > 1.5*stdev){
-                                if(vectoracc[2] > 22){
+                                if(acc_array > 22){
                                     systemText.setText("Abnormally High Heart Rate");
                                     myActivity.runOnUiThread(systemText);
                                     descriptionText.setText("Blink has detected abnormal heart rate readings, over " + hdev +" past your normal range, considering pulling over");
@@ -665,13 +680,15 @@ public class HealthFragment extends Fragment{
                                     good = false;
                                 }
                                 if(rotation > 1.0){
-                                    systemText.setText("Heart Rate");
+                                    systemText.setText("Erratic Driving Detected");
                                     myActivity.runOnUiThread(systemText);
                                     descriptionText.setText("Blink has detected abnormal heart rate readings, over " + hdev +" past your normal range, considering pulling over");
                                     myActivity.runOnUiThread(descriptionText);
                                     colorcore.setColor(red);
                                     myActivity.runOnUiThread(colorcore);
                                     good = false;
+                                    playmp("Cease");
+
                                 }
                                 if(monodec){
                                     systemText.setText("Rotation");
@@ -684,13 +701,15 @@ public class HealthFragment extends Fragment{
                                     playmp("Monodec");
                                 }
                                 if(acccount > 3){
-                                    systemText.setText("Acceleration & Stress");
+                                    systemText.setText("Erratic Driving Detected");
                                     myActivity.runOnUiThread(systemText);
                                     descriptionText.setText("Blink has detected eratic driving behavior, consider slowing down");
                                     myActivity.runOnUiThread(descriptionText);
                                     colorcore.setColor(red);
                                     myActivity.runOnUiThread(colorcore);
                                     good = false;
+                                    playmp("Cease");
+
                                 }
                             }
                         }
@@ -760,6 +779,7 @@ public class HealthFragment extends Fragment{
                             colorcore.setColor(red);
                             myActivity.runOnUiThread(colorcore);
                             good = false;
+                            playmp("Rot");
                         }
                     }
 
