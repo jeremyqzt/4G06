@@ -67,6 +67,7 @@ public class HealthFragment extends Fragment{
     int acccount = 0;
     long start, end;
     float temp = 20;
+    float temperature = 0;
     double heartavg = 0.0;
     double stdev = 0.0;
     ArrayList<Integer> heart_array = new ArrayList<>();
@@ -83,6 +84,11 @@ public class HealthFragment extends Fragment{
     private static String green = "#2E7D32";
     private Activity myActivity;
     int flag = 0;
+    int speedflag = 0;
+    int age = 45;
+    double agedecider = 2; //2.5 low, 2 med, 1.5 high
+    int accfalg = 0;
+    SpeedService speed;
     MediaPlayer drowsymp, monomp, mondecmp,speedmp, speedweathermp, nonlinearmp, fatiguemp, crashmp;
     private String roadtype = "";
     @Override
@@ -98,7 +104,7 @@ public class HealthFragment extends Fragment{
         sys = (TextView) view.findViewById(R.id.systemtext);
         desc = (TextView) view.findViewById(R.id.desctext);
         myActivity = getActivity();
-
+        speed = new SpeedService();
         startListeners();
 
         updateParams();
@@ -166,7 +172,13 @@ public class HealthFragment extends Fragment{
         FirebaseDB.getInstance("Vehicle/Speed").onChange(new DatabaseChangeListener() {
             @Override
             public void onSuccess(Object value) {
+
                 carSpeed = Integer.parseInt(value.toString());
+                if (carSpeed < 1){
+                    speedflag = 1;
+                }else{
+                    speedflag = 0;
+                }
             }
 
             @Override
@@ -179,7 +191,11 @@ public class HealthFragment extends Fragment{
             @Override
             public void onSuccess(Object value) {
                 acc_array = Integer.parseInt(value.toString());
-
+                if (acc_array < 1){
+                    accfalg = 1;
+                }else{
+                    accfalg = 0;
+                }
             }
 
             @Override
@@ -192,6 +208,26 @@ public class HealthFragment extends Fragment{
             @Override
             public void onSuccess(Object value) {
                 watchLight = Float.parseFloat(value.toString());
+            }
+
+            @Override
+            public void onFail(String value) {
+
+            }
+        });
+        FirebaseDB.getInstance("Person/Age").onChange(new DatabaseChangeListener() {
+            @Override
+            public void onSuccess(Object value) {
+
+                age = Integer.parseInt(value.toString());
+                Log.d("AGE:", "AGE: " + age);
+                if (age < 45){
+                    agedecider = 2.5;
+                }else if (age < 65){
+                    agedecider = 2;
+                }else {
+                    agedecider = 1.5;
+                }
             }
 
             @Override
@@ -315,6 +351,19 @@ public class HealthFragment extends Fragment{
             }
         });
 
+        FirebaseDB.getInstance("Person/Gender").onChange(new DatabaseChangeListener() {
+            @Override
+            public void onSuccess(Object value) {
+                gender = String.valueOf(value);
+                Log.d("GenderTest", "Gender: " + gender);
+            }
+
+            @Override
+            public void onFail(String value) {
+
+            }
+        });
+
         //final progressBarTask healthBarChange = new progressBarTask(0,0,healthBar);
         FirebaseDB.getInstance("InformationSet/heartProxLight").onChange(new DatabaseChangeListener() {
             @Override
@@ -364,6 +413,22 @@ public class HealthFragment extends Fragment{
         double totalG = Math.sqrt(watchgyro[0]*watchgyro[0] + watchgyro[1]*watchgyro[1] + watchgyro[2]*watchgyro[2])/10;
         map.put("TotalGForce", totalG );
         playmp("Crash");
+        if (watchgyro[0] < -5){
+            map.put("CollissionPointFR", "Rear");
+        }else if (watchgyro[0] > 5){
+            map.put("CollissionPointFR", "Front");
+        }else{
+            map.put("CollissionPointFR", "Undetermined");
+        }
+
+        if (watchgyro[1] < -5){
+            map.put("CollissionPointLR", "Right");
+        }else if (watchgyro[1] > 5){
+            map.put("CollissionPointLR", "Left");
+        }else{
+            map.put("CollissionPointLR", "Undetermined");
+        }
+
         ref.push().setValue(map);
 
 
@@ -389,10 +454,22 @@ public class HealthFragment extends Fragment{
             @Override
             public void run() {
                 while(true){
+                    if (speedflag == 1){
+                        carSpeed = (int) speed.getSpeed();
+                        Log.d("LookAway", "speed: " + carSpeed);
+                    }
+                    if (accfalg == 1){
+                        acc_array = Math.round(vectoracc[2]); //Overide with sensor if missing
+                    }
                     //gender division
                     if(gender.equals("Female")){
                         genderdev = 10;
+                        Log.d("GenderTest", "Gender: " + gender + "Dev: " + genderdev);
+                    }else{
+                        genderdev = 0;
                     }
+                    Log.d("GenderTest", "Gender: " + gender + "Dev: " + genderdev);
+
                     //bad way to count to 5, should be done another way
                     //checking steering wheel positions
 
@@ -445,7 +522,7 @@ public class HealthFragment extends Fragment{
                     if(wiper == 1){
                         sdevcount += 1;
                         if (sdevcount > 9) {
-                            if (carSpeed > carsavg + 2*carstdev) { //In Weather and Very Fast!
+                            if (carSpeed > carsavg + agedecider*carstdev) { //In Weather and Very Fast!
                                 systemText.setText("Speed");
                                 myActivity.runOnUiThread(systemText);
                                 descriptionText.setText("Speed is Abnormally high, over: " + String.valueOf((Math.round(carSpeed - carsavg)/carstdev)) +" past your average");
@@ -488,20 +565,20 @@ public class HealthFragment extends Fragment{
 
 
                     //Temp extremes
-                    if((temp-4) > 35){
-                        systemText.setText("Temperature: High");
+                    if((temp-10) > 37){
+                        systemText.setText("High Temperature");
                         myActivity.runOnUiThread(systemText);
-                        descriptionText.setText("Consider turning on the cool air," + (temp-4)+ " Celsius is too warm for operation");
+                        descriptionText.setText("Consider turning on the cool air, " + (temp-10)+ " Celsius is too warm for operation");
                         myActivity.runOnUiThread(descriptionText);
                         colorcore.setColor(orange);
                         myActivity.runOnUiThread(colorcore);
                         good = false;
                     }
 
-                    if(temp < 15){
+                    if((temp-10) < 0){
                         systemText.setText("Temperature: Low");
                         myActivity.runOnUiThread(systemText);
-                        descriptionText.setText("Consider turning on the cool air," + temp + " Celsius is too cold for operation");
+                        descriptionText.setText("Consider turning on the cool air, " + (temp-10) + " Celsius is too cold for operation");
                         myActivity.runOnUiThread(descriptionText);
                         colorcore.setColor(orange);
                         myActivity.runOnUiThread(colorcore);
@@ -513,10 +590,10 @@ public class HealthFragment extends Fragment{
                     stdev = util.findSTD(heart_array);
 
                     if(stdev < 10){
-                        stdev = 10;
+                        stdev = 7.5;
                     }
 
-                    stdev *= multiplier;
+                    stdev *= agedecider;
                     //increasing
                     if (heart_array.size() > 7){
                         if(util.isIncreasing(heart_array,7)){
